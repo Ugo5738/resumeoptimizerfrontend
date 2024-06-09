@@ -1,0 +1,151 @@
+/* ResumeTemplate.css */
+
+.resume-container {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    max-width: 1024px;
+    margin: auto;
+    background-color: #f0f0f0;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .resume-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #0077b5; /* LinkedIn blue for the border */
+  }
+  
+  .resume-header h1 {
+    font-size: 36px;
+    color: #0077b5; /* LinkedIn blue for the name */
+    margin: 0;
+    padding: 0;
+  }
+  
+  .contact-info {
+    text-align: right;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .contact-info a {
+    color: #0077b5;
+    text-decoration: none;
+  }
+  
+  .resume-section {
+    margin-bottom: 30px;
+  }
+  
+  .resume-section h2 {
+    font-size: 22px;
+    color: #0077b5; /* LinkedIn blue for section headers */
+    margin-bottom: 10px;
+  }
+  
+  .resume-summary,
+  .resume-experience,
+  .resume-education,
+  .resume-skills,
+  .resume-certifications,
+  .resume-references {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .resume-summary p,
+  .resume-experience .experience-entry p,
+  .resume-education .education-entry p,
+  .resume-skills ul,
+  .resume-certifications .certification-entry p,
+  .resume-references .reference-entry p {
+    color: #333;
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .experience-entry {
+    margin-bottom: 20px;
+  }
+  
+  .two-column {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .column {
+    width: 49%;
+  }
+  
+  .skills-list,
+  .certification-list,
+  .references-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .skills-list li,
+  .certification-list div,
+  .references-list div {
+    background: #fff; /* White background for list items */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Additional custom styles for matching the resume */
+  .contact-info span:not(:last-child):after {
+    content: '|';
+    margin: 0 10px;
+    color: #0077b5; /* LinkedIn blue for separators */
+  }
+  
+  /* Style adjustments for details not covered in original code, such as job role titles */
+  .experience-entry h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0077b5; /* LinkedIn blue for job titles */
+    margin: 0;
+  }
+  
+  /* Certification and reference titles */
+  .certification-entry h3,
+  .reference-entry p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 10px 0;
+  }
+  
+  /* Ensure all paragraphs have no top margin for consistency */
+  p {
+    margin-top: 0;
+  }
+  
+  /* Add a break inside the contact information for better spacing */
+  .contact-info {
+    white-space: nowrap;
+    flex-basis: 40%;
+  }
+  
+  /* Additional responsive styling if needed */
+  @media (max-width: 768px) {
+    .resume-header,
+    .two-column {
+      flex-direction: column;
+    }
+  
+    .column {
+      width: 100%;
+    }
+  }
+  

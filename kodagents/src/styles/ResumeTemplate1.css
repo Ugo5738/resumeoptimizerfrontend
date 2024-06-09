@@ -1,0 +1,44 @@
+.resume-container {
+/* Your container styles */
+}
+.resume-header {
+/* Your header styles */
+}
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.contact-info .icon {
+    position: relative;
+    top: 2px;
+    opacity: 0.7;
+}
+.resume-summary, .resume-experience, .resume-education {
+    margin-bottom: 20px;
+}
+.experience-entry, .education-entry {
+    margin-bottom: 15px;
+}
+.skills-list {
+    list-style-type: none;
+    padding: 0;
+}
+.certification-list {
+    list-style-type: none;
+    padding: 0;
+}
+.certification-entry, .reference-entry {
+    margin-bottom: 15px;
+}
+.two-column {
+    display: flex;
+    justify-content: space-between;
+}
+.column {
+    flex: 1;
+    margin-right: 10px;
+}
+.column:last-child {
+    margin-right: 0;
+}
