@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TemplateSelection from "./pages/Agents/ResumeBuilder/TemplateSelection";
@@ -9,12 +9,22 @@ import ResumePreview from "./pages/Agents/ResumeBuilder/ResumePreview";
 import UploadResume from "./pages/UploadResume";
 import JobDetails from "./pages/JobDetails";
 import Loading from "./pages/Loading";
+import { connectWebSocket, disconnectWebSocket } from "./services/websocketService";
 
 function App() {
-  // useEffect(() => {
-  //   const websocketUrl = "ws://localhost:8000/ws"; // Replace with backend WebSocket URL
-  //   connectWebSocket(websocketUrl);
-  // }, []);
+  const [websocketConnected, setWebsocketConnected] = useState(false);
+
+  useEffect(() => {
+    // const websocketUrl = "ws://54.226.242.175:8000/ws/resume/1111/"; // Replace with backend WebSocket URL
+    const websocketUrl = "ws://localhost:8000/ws/resume/1111/"; // Replace with backend WebSocket URL
+    connectWebSocket(websocketUrl);
+    setWebsocketConnected(true);
+
+    return () => {
+      disconnectWebSocket();
+      setWebsocketConnected(false);
+    };
+  }, []);
 
   return (
     <Router>

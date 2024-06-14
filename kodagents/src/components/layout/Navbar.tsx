@@ -9,10 +9,10 @@ import {
 
 // Assuming all icons from 'react-icons/ai' for consistency
 const navItems = [
-  { name: "Home", href: "#", icon: AiOutlineHome },
+  { name: "How to Use", href: "#", icon: AiOutlineHome },
   { name: "About", href: "#", icon: AiOutlineUser }, // Assuming 'About' uses 'AiOutlineUser'
   { name: "AI Agents", href: "#", icon: AiOutlineUser }, // Assuming a different or same icon can be used
-  { name: "Contact", href: "#", icon: AiOutlineMail },
+  { name: "Pricing", href: "#", icon: AiOutlineMail },
 ];
 
 const Navbar = () => {

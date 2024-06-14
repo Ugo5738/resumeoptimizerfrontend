@@ -1,36 +1,27 @@
 import React, { useEffect } from "react";
 import { onMessage } from "../services/websocketService";
+import { useNavigate } from 'react-router-dom';
+
+import BackgroundDesign from "../components/layout/BackgroundDesign";
+import Navbar from "../components/layout/Navbar";
 
 const Loading: React.FC = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     onMessage((message) => {
       console.log("Message from server:", message);
       // Handle incoming message, possibly redirect to results page
+      if (message.type === "optimization_complete") {
+        navigate("/results");
+      }
     });
-  }, []);
+  }, [navigate]);
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-50">
-      <nav className="w-full flex justify-between items-center p-4 bg-white shadow">
-        <div className="text-2xl font-bold">ResumeOptimizer.io</div>
-        <div className="space-x-4">
-          <a href="#" className="text-gray-600">
-            How to Use
-          </a>
-          <a href="#" className="text-gray-600">
-            About
-          </a>
-          <a href="#" className="text-gray-600">
-            Pricing
-          </a>
-          <a href="#" className="text-gray-600">
-            Log In
-          </a>
-          <a href="#" className="text-gray-600">
-            Sign Up
-          </a>
-        </div>
-      </nav>
+    <div className="flex flex-col h-screen">
+      <Navbar />
+      <BackgroundDesign />
       <main className="flex flex-col items-center justify-center flex-1 p-4">
         <div className="text-center">
           <div

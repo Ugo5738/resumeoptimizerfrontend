@@ -1,25 +1,15 @@
+import BackgroundDesign from "../components/layout/BackgroundDesign";
+import Navbar from "../components/layout/Navbar";
+import MainContent from "../components/layout/MainContent";
+
 import React, { useState, useEffect } from "react";
-import {
-  connectWebSocket,
-  sendMessage,
-  disconnectWebSocket,
-} from "../services/websocketService";
-import { useNavigate } from "react-router-dom";
+import { sendMessage } from "../services/websocketService";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const UploadResume: React.FC = () => {
   const [resume, setResume] = useState<File | null>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const url =
-      "wss://jubilant-winner-5r7v6pq66w9h7r9p-8000.app.github.dev/ws/resume/1111/";
-    connectWebSocket(url);
-
-    return () => {
-      disconnectWebSocket();
-    };
-  }, []);
 
   const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -33,7 +23,8 @@ const UploadResume: React.FC = () => {
       formData.append("file", resume);
 
       try {
-        const response = await axios.post("/upload_resume", formData, {
+        // const response = await axios.post("http://54.226.242.175:8000/api/resume/upload-resume/", formData, {
+        const response = await axios.post("http://localhost:8000/api/resume/upload-resume/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -53,27 +44,9 @@ const UploadResume: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-50">
-      <nav className="w-full flex justify-between items-center p-4 bg-white shadow">
-        <div className="text-2xl font-bold">ResumeOptimizer.io</div>
-        <div className="space-x-4">
-          <a href="#" className="text-gray-600">
-            How to Use
-          </a>
-          <a href="#" className="text-gray-600">
-            About
-          </a>
-          <a href="#" className="text-gray-600">
-            Pricing
-          </a>
-          <a href="#" className="text-gray-600">
-            Log In
-          </a>
-          <a href="#" className="text-gray-600">
-            Sign Up
-          </a>
-        </div>
-      </nav>
+    <div className="flex flex-col h-screen">
+      <Navbar />
+      <BackgroundDesign />
       <main className="flex flex-col items-center justify-center flex-1 p-4">
         <h1 className="text-4xl font-bold mb-6 text-center">
           Optimize Resume and Craft Cover Letter
@@ -81,7 +54,7 @@ const UploadResume: React.FC = () => {
         <p className="text-lg text-gray-600 mb-8 text-center">
           100% Automatically and <span className="text-purple-600">Free</span>
         </p>
-        <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
           <input type="file" onChange={handleResumeUpload} className="mb-4" />
           <button
             onClick={handleSubmit}
