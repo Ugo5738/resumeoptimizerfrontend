@@ -1,7 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ResumeTemplate from "./ResumeTemplate";
-import { sampleResumeData } from "./SampleData";
 
 // Mockup data for template previews. In real application, you might fetch these from a backend.
 const templates = [

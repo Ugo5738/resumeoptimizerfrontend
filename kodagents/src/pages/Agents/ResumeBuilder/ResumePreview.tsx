@@ -5,7 +5,7 @@ import { saveAs } from "file-saver";
 import ResumeTemplate from "./ResumeTemplate";
 // import ResumeTemplate1 from "./ResumeTemplate1";
 import { onMessage } from "../../../services/websocketService";
-import { ResumeData, ExperienceEntry } from "../../../types/types";
+import { ResumeData } from "../../../types/types";
 
 const ResumePreview: React.FC = () => {
   const location = useLocation();

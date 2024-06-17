@@ -1,8 +1,7 @@
 import BackgroundDesign from "../components/layout/BackgroundDesign";
 import Navbar from "../components/layout/Navbar";
-import MainContent from "../components/layout/MainContent";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { sendMessage } from "../services/websocketService";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
@@ -23,8 +22,8 @@ const UploadResume: React.FC = () => {
       formData.append("file", resume);
 
       try {
-        // const response = await axios.post("http://54.226.242.175:8000/api/resume/upload-resume/", formData, {
-        const response = await axios.post("http://localhost:8000/api/resume/upload-resume/", formData, {
+        const response = await axios.post("http://54.226.242.175:8000/api/resume/upload-resume/", formData, {
+        // const response = await axios.post("http://localhost:8000/api/resume/upload-resume/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

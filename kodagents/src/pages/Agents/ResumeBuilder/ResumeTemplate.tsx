@@ -31,7 +31,7 @@ const ResumeTemplate = ({ resumeData }: ResumeTemplateProps) => {
       <section className="resume-experience">
         <h2>EXPERIENCE</h2>
         {Object.entries(resumeData.experience).map(
-          ([key, exp]: [string, ExperienceEntry], index) => (
+          ([, exp]: [string, ExperienceEntry], index) => (
             <div key={index} className="experience-entry">
               <h3>{exp.jobRole}</h3>
               {exp.companyName && <p>{exp.companyName}</p>}

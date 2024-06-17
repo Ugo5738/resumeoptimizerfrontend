@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { sendMessage } from "../../../services/websocketService";
-import { ResumeData } from "../../../types/types";
 import { sampleResumeData } from "./SampleData";
 
 
@@ -12,8 +10,6 @@ const ResumeForm: React.FC = () => {
   const { templateId } = location.state;
   const [resumeDescription, setResumeDescription] = useState("");
   const [jobDetails, setJobDetails] = useState("");
-
-  const [resumeData, setResumeData] = useState<ResumeData>(sampleResumeData);
 
   const handleJobDetailsChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
