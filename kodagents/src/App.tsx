@@ -15,7 +15,7 @@ function App() {
   const [, setWebsocketConnected] = useState(false);
 
   useEffect(() => {
-    const websocketUrl = "ws://54.226.242.175:8000/ws/resume/1111/"; // Replace with backend WebSocket URL
+    const websocketUrl = "wss://api.resumeguru.pro/ws/resume/1111/"; // Replace with backend WebSocket URL
     // const websocketUrl = "ws://localhost:8000/ws/resume/1111/"; // Replace with backend WebSocket URL
     connectWebSocket(websocketUrl);
     setWebsocketConnected(true);

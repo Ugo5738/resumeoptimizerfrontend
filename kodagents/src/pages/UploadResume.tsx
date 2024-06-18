@@ -22,7 +22,7 @@ const UploadResume: React.FC = () => {
       formData.append("file", resume);
 
       try {
-        const response = await axios.post("http://54.226.242.175:8000/api/resume/upload-resume/", formData, {
+        const response = await axios.post("https://api.resumeguru.pro/api/resume/upload-resume/", formData, {
         // const response = await axios.post("http://localhost:8000/api/resume/upload-resume/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
