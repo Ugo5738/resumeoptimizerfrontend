@@ -51,15 +51,16 @@ const UploadResume: React.FC = () => {
           Optimize Resume and Craft Cover Letter
         </h1>
         <p className="text-lg text-gray-600 mb-8 text-center">
-          100% Automatically and <span className="text-purple-600">Free</span>
+          100% Automatic and <span className="text-purple-600">Free</span>
         </p>
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
           <input type="file" onChange={handleResumeUpload} className="mb-4" />
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            // className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Upload Resume
+            Upload Resume (PDF only)
           </button>
         </div>
       </main>

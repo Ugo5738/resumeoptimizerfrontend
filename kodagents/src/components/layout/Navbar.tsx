@@ -9,10 +9,10 @@ import {
 
 // Assuming all icons from 'react-icons/ai' for consistency
 const navItems = [
-  { name: "How to Use", href: "#", icon: AiOutlineHome },
-  { name: "About", href: "#", icon: AiOutlineUser }, // Assuming 'About' uses 'AiOutlineUser'
-  { name: "AI Agents", href: "#", icon: AiOutlineUser }, // Assuming a different or same icon can be used
-  { name: "Pricing", href: "#", icon: AiOutlineMail },
+  { name: "How to Use", href: "/how-to-use", icon: AiOutlineHome },
+  { name: "About", href: "/about", icon: AiOutlineUser },
+  // { name: "AI Agents", href: "#", icon: AiOutlineUser }, // Assuming a different or same icon can be used
+  { name: "Pricing", href: "/pricing", icon: AiOutlineMail },
 ];
 
 const Navbar = () => {
@@ -55,8 +55,8 @@ const Navbar = () => {
         aria-label="Global navigation"
       >
         <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Kodagents</span>
+          <a href="/" className="-m-1.5 p-1.5">
+            <span className="sr-only">Resumeguru.pro</span>
             {/* Placeholder for logo */}
             <img
               className="w-auto h-8"

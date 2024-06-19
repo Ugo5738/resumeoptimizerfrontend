@@ -5,13 +5,15 @@ import { useNavigate } from "react-router-dom";
 import BackgroundDesign from "../components/layout/BackgroundDesign";
 import Navbar from "../components/layout/Navbar";
 
+import "../styles/base.css";
+
 const JobDetails: React.FC = () => {
   const [jobDetails, setJobDetails] = useState<string>("");
   const navigate = useNavigate();
 
   const handleSubmit = () => {
     sendMessage({ type: "jobDetails", details: jobDetails });
-    navigate("/loading");
+    navigate("/result");
   };
 
   return (
@@ -24,13 +26,14 @@ const JobDetails: React.FC = () => {
           value={jobDetails}
           onChange={(e) => setJobDetails(e.target.value)}
           className="w-full p-2 border rounded mb-4"
-          placeholder="Enter job details here"
+          placeholder="Paste job details here"
         ></textarea>
         <button
           onClick={handleSubmit}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          // className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Submit
+          Optimize
         </button>
       </main>
     </div>

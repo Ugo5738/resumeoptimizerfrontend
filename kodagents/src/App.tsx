@@ -8,7 +8,10 @@ import ResumePreview from "./pages/Agents/ResumeBuilder/ResumePreview";
 
 import UploadResume from "./pages/UploadResume";
 import JobDetails from "./pages/JobDetails";
-import Loading from "./pages/Loading";
+import Result from "./pages/Result";
+import HowToUse from "./pages/HowToUse";
+import About from "./pages/About";
+import Pricing from "./pages/Pricing";
 import { connectWebSocket, disconnectWebSocket } from "./services/websocketService";
 
 function App() {
@@ -31,7 +34,10 @@ function App() {
       <Routes>
         <Route path="/upload" element={<UploadResume />} />
         <Route path="/job-details" element={<JobDetails />} />
-        <Route path="/loading" element={<Loading />} />
+        <Route path="/result" element={<Result />} />
+        <Route path="/how-to-use" element={<HowToUse />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/pricing" element={<Pricing />} />
 
         <Route path="/" element={<HomePage />} />
         <Route path="/selection" element={<TemplateSelection />} />
