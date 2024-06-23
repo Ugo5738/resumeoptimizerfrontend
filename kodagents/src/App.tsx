@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 import HomePage from "./pages/HomePage";
 import TemplateSelection from "./pages/Agents/ResumeBuilder/TemplateSelection";
 import ResumeForm from "./pages/Agents/ResumeBuilder/ResumeForm";
@@ -18,8 +19,14 @@ function App() {
   const [, setWebsocketConnected] = useState(false);
 
   useEffect(() => {
-    const websocketUrl = "wss://api.resumeguru.pro/ws/resume/1111/"; // Replace with backend WebSocket URL
-    // const websocketUrl = "ws://localhost:8000/ws/resume/1111/"; // Replace with backend WebSocket URL
+    let userId: string = localStorage.getItem("userId") || uuidv4();
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", userId);
+    }
+
+    const websocketUrl = `wss://api.resumeguru.pro/ws/resume/${userId}/`;
+    console.log(websocketUrl)
+    // const websocketUrl = "ws://localhost:8000/ws/resume/${userId}/"; // Replace with backend WebSocket URL
     connectWebSocket(websocketUrl);
     setWebsocketConnected(true);
 
