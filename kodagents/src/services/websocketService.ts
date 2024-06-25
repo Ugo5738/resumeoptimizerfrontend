@@ -1,29 +1,57 @@
-// websocketService.ts
-let socket: WebSocket;
+let socket: WebSocket | null = null;
 
-export const connectWebSocket = (url: string) => {
-  socket = new WebSocket(url);
-  socket.onopen = () => console.log("WebSocket connected");
-  socket.onclose = () => console.log("WebSocket disconnected");
+export const connectWebSocket = (url: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    socket = new WebSocket(url);
+    
+    socket.onopen = () => {
+      console.log("WebSocket connected");
+      resolve();
+    };
+    
+    socket.onclose = () => {
+      console.log("WebSocket disconnected");
+      socket = null;
+    };
+    
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+      reject(error);
+    };
+  });
 };
 
 export const disconnectWebSocket = () => {
-  if (socket) {
+  if (socket && socket.readyState === WebSocket.OPEN) {
     socket.close();
   }
 };
 
-export const sendMessage = (message: object) => {
-  if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(message));
+export const isWebSocketConnected = (): boolean => {
+  return socket !== null && socket.readyState === WebSocket.OPEN;
+};
+
+export const sendMessage = (message: object): void => {
+  if (isWebSocketConnected()) {
+    socket!.send(JSON.stringify(message));
   } else {
     console.error("WebSocket is not open");
+    throw new Error("WebSocket is not open");
   }
 };
 
-export const onMessage = (callback: (message: any) => void) => {
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    callback(message);
-  };
+export const onMessage = (callback: (message: any) => void): void => {
+  if (socket) {
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        callback(message);
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+  } else {
+    console.error("WebSocket is not initialized");
+    throw new Error("WebSocket is not initialized");
+  }
 };

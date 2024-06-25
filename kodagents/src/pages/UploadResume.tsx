@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { sendMessage } from "../services/websocketService";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { trackEvent, trackTiming } from '../utils/analytics';
 
 const UploadResume: React.FC = () => {
   const [resume, setResume] = useState<File | null>(null);
@@ -12,7 +13,9 @@ const UploadResume: React.FC = () => {
 
   const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setResume(event.target.files[0]);
+      const file = event.target.files[0];
+      setResume(file);
+      trackEvent("Resume", "File Selected", file.type);
     }
   };
 
@@ -20,6 +23,8 @@ const UploadResume: React.FC = () => {
     if (resume) {
       const formData = new FormData();
       formData.append("file", resume);
+
+      const startTime = performance.now();
 
       try {
         const response = await axios.post("https://api.resumeguru.pro/api/resume/upload-resume/", formData, {
@@ -30,6 +35,10 @@ const UploadResume: React.FC = () => {
         });
 
         if (response.data.success) {
+          const duration = Math.round(performance.now() - startTime);
+          trackEvent("Resume", "Upload Success", resume.type);
+          trackTiming("Resume", "Upload Time", duration, resume.type);
+
           sendMessage({
             type: "resume_uploaded",
             file_key: response.data.file_key,
@@ -37,6 +46,7 @@ const UploadResume: React.FC = () => {
           navigate("/job-details");
         }
       } catch (error) {
+        trackEvent("Resume", "Upload Error", "Error");
         console.error("File upload error:", error);
       }
     }
