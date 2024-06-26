@@ -61,23 +61,21 @@ function AppContent() {
   }, [location]);
   
   return (
-    <Router>
-      <Routes>
-        <Route path="/upload" element={<UploadResume />} />
-        <Route path="/job-details" element={<JobDetails />} />
-        <Route path="/result" element={<Result />} />
-        <Route path="/how-to-use" element={<HowToUse />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/terms" element={<Terms />} />
+    <Routes>
+      <Route path="/upload" element={<UploadResume />} />
+      <Route path="/job-details" element={<JobDetails />} />
+      <Route path="/result" element={<Result />} />
+      <Route path="/how-to-use" element={<HowToUse />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/terms" element={<Terms />} />
 
-        <Route path="/" element={<HomePage />} />
-        <Route path="/selection" element={<TemplateSelection />} />
-        <Route path="/resume-form" element={<ResumeForm />} />
-        <Route path="/edit" element={<ResumeForm />} />
-        <Route path="/preview" element={<ResumePreview />} />
-      </Routes>
-    </Router>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/selection" element={<TemplateSelection />} />
+      <Route path="/resume-form" element={<ResumeForm />} />
+      <Route path="/edit" element={<ResumeForm />} />
+      <Route path="/preview" element={<ResumePreview />} />
+    </Routes>
   );
 }
 
