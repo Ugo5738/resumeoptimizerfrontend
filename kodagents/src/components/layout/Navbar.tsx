@@ -13,6 +13,7 @@ const navItems = [
   { name: "About", href: "/about", icon: AiOutlineUser },
   // { name: "AI Agents", href: "#", icon: AiOutlineUser }, // Assuming a different or same icon can be used
   { name: "Pricing", href: "/pricing", icon: AiOutlineMail },
+  { name: "Terms Of Use", href: "/terms", icon: AiOutlineMail },
 ];
 
 const Navbar = () => {
