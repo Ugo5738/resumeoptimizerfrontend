@@ -87,6 +87,78 @@ const Terms = () => {
             If you have any questions about these terms and conditions, please contact us at:
             Resumeguru.pro
           </p>
+          <hr></hr>
+          <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
+          <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
+            <p>
+              We are committed to protecting your privacy and ensuring that your personal information is handled in a safe and responsible manner. This Privacy Policy explains how we collect, use, and protect your information when you use our website and services.
+            </p>
+            <h3 className="text-2xl font-semibold">1. Information We Collect</h3>
+            <p>
+              1.1. Personal Information: When you create an account or use our services, we may collect personal information such as your name, email address, contact details, and payment information.
+            </p>
+            <p>
+              1.2. Usage Data: We may collect information on how you access and use our website and services. This includes your IP address, browser type, operating system, pages viewed, and the dates/times of your visits.
+            </p>
+            <p>
+              1.3. Cookies: We use cookies and similar tracking technologies to track activity on our website and store certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.
+            </p>
+            <h3 className="text-2xl font-semibold">2. How We Use Your Information</h3>
+            <p>
+              2.1. To Provide and Maintain Our Services: We use your personal information to create and manage your account, process payments, and provide you with the services you request.
+            </p>
+            <p>
+              2.2. To Improve Our Services: We analyze usage data to understand how our services are used and to improve their functionality and performance.
+            </p>
+            <p>
+              2.3. To Communicate with You: We may use your personal information to contact you with newsletters, marketing or promotional materials, and other information that may be of interest to you.
+            </p>
+            <p>
+              2.4. To Ensure Security: We use your information to monitor and analyze our website for security purposes and to prevent fraud and abuse.
+            </p>
+            <h3 className="text-2xl font-semibold">3. Sharing Your Information</h3>
+            <p>
+              3.1. With Service Providers: We may share your information with third-party service providers who perform services on our behalf, such as payment processing, data analysis, email delivery, and customer support.
+            </p>
+            <p>
+              3.2. For Legal Reasons: We may disclose your information if required to do so by law or in response to valid requests by public authorities.
+            </p>
+            <p>
+              3.3. Business Transfers: In the event of a merger, acquisition, or sale of all or a portion of our assets, your personal information may be transferred to the acquiring entity.
+            </p>
+            <h3 className="text-2xl font-semibold">4. Data Security</h3>
+            <p>
+              We implement appropriate technical and organizational measures to protect your personal information from unauthorized access, disclosure, alteration, or destruction. However, no method of transmission over the Internet or electronic storage is completely secure, and we cannot guarantee absolute security.
+            </p>
+            <h3 className="text-2xl font-semibold">5. Your Rights</h3>
+            <p>
+              5.1. Access and Update: You have the right to access and update your personal information. You can do this through your account settings or by contacting us directly.
+            </p>
+            <p>
+              5.2. Deletion: You have the right to request the deletion of your personal information, subject to certain exceptions. Please note that we may retain certain information as required by law or for legitimate business purposes.
+            </p>
+            <p>
+              5.3. Opt-Out: You can opt-out of receiving marketing communications from us by following the unsubscribe link in our emails or by contacting us.
+            </p>
+            <h3 className="text-2xl font-semibold">6. Children's Privacy</h3>
+            <p>
+              Our services are not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and you become aware that your child has provided us with personal information, please contact us, and we will take steps to remove that information from our servers.
+            </p>
+            <h3 className="text-2xl font-semibold">7. Changes to This Privacy Policy</h3>
+            <p>
+              We may update our Privacy Policy from time to time. Any changes will be posted on this page, and the date of the latest revision will be indicated at the top of the page. Your continued use of our services after any changes to this Privacy Policy constitutes your acceptance of the new terms.
+            </p>
+            <h3 className="text-2xl font-semibold">8. Contact Us</h3>
+            <p>
+              If you have any questions about this Privacy Policy, please contact us at:
+              Resumeguru.pro
+              <br />
+              resumegurupro@gmail.com
+            </p>
+            <p>
+              Thank you for trusting Resumeguru.pro with your personal information. We are committed to protecting your privacy and ensuring the security of your data.
+            </p>
+          </div>
         </div>
       </main>
     </div>
