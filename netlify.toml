@@ -1,7 +1,7 @@
 [build]
   base = "kodagents"
   command = "npm run build"
-  publish = "dist"
+  publish = "kodagents/dist"
 
 [[redirects]]
   from = "/*"
