@@ -88,6 +88,53 @@ const Terms = () => {
             Resumeguru.pro
           </p>
           <hr></hr>
+          <h1 className="text-3xl font-bold mb-4">Cancellation and Termination</h1>
+          <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
+            <h3 className="text-2xl font-semibold">1. Subscription Cancellation:</h3>
+            <p>
+              1.1. You may cancel your subscription at any time through your account settings or by contacting our customer support at resumegurupro@gmail.com.
+            </p>
+            <p>
+              1.2. Cancellation will take effect at the end of your current billing cycle.
+            </p>
+            <p>
+              1.3. You will retain access to the service until the end of your current billing period.
+            </p>
+            <p>
+              1.4. No refunds will be provided for partial month subscriptions or unused periods of the service.
+            </p>
+            <h3 className="text-2xl font-semibold">2. Termination by ResumeGuru:</h3>
+            <p>
+              2.1. We reserve the right to suspend or terminate your account and access to the service:
+            </p>
+            <p>
+              a) If you violate these Terms and Conditions
+            </p>
+            <p>
+              b) If we suspect fraudulent, abusive, or illegal activity
+            </p>
+            <p>
+              c) If we discontinue or materially modify the service
+            </p>
+            <p>
+              2.2. We will provide notice of termination unless we believe immediate termination is necessary to comply with legal obligations or prevent harm to our systems or other users.
+            </p>
+            <h3 className="text-2xl font-semibold">3. Effects of Cancellation or Termination:</h3>
+            <p>
+              3.1. Upon cancellation or termination, your right to use the service will cease immediately.
+            </p>
+            <p>
+              3.2. We may delete your account information and any content associated with your account.
+            </p>
+            <p>
+              3.3. You are responsible for saving any data or content you wish to retain before cancellation or termination.
+            </p>
+            <h3 className="text-2xl font-semibold">4. Surviving Provisions:</h3>
+            <p>
+              4.1. Any provisions of these Terms that by their nature should survive termination shall remain in effect after termination of your account or these Terms.
+            </p>
+          </div> 
+          <hr></hr>
           <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
           <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
             <p>
