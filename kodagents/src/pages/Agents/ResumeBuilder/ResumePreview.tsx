@@ -38,7 +38,7 @@ const ResumePreview: React.FC = () => {
     try {
       const response = await axios.get(
         // "http://localhost:8000/api/download-resume",
-        "https://resumeguru.pro/api/download-resume",
+        "https://api.resumeguru.pro/api/download-resume",
         {
           responseType: "blob",
         }

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const instance = axios.create({
   // baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-  baseURL: import.meta.env.VITE_API_URL || 'https://resumeguru.pro',
+  baseURL: import.meta.env.VITE_API_URL || 'https://api.resumeguru.pro',
   withCredentials: true, // This is important for sending cookies
 });
 
