@@ -111,7 +111,7 @@ const Login: React.FC = () => {
 
       await login(response.data.access, response.data.refresh);
 
-      // Get the redirect path from location state, or default to '/upload'
+      // Get the redirect path from location state, or default to '/'
       const from = (location.state as any)?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (error: any) {
