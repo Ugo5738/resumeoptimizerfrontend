@@ -1,13 +1,10 @@
-import BackgroundDesign from "../components/layout/BackgroundDesign";
-import Navbar from "../components/layout/Navbar";
+import PageLayout from "../components/layout/PageLayout";
 
 const About = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <BackgroundDesign />
-      <main className="flex flex-col items-center justify-center flex-1 p-4">
-        <h1 className="text-3xl font-bold mb-4">About Us</h1>
+    <PageLayout>
+      <div className="flex flex-col items-center justify-center">
+        <h2 className="text-3xl font-bold mb-4">About Us</h2>
         <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
           <p>
             Welcome to Resumeguru.pro, where we transform the job application process with cutting-edge AI technology. Our mission is to empower job seekers by providing an innovative tool that optimizes resumes and crafts tailored cover letters, ensuring they stand out in today's competitive job market.
@@ -35,8 +32,8 @@ const About = () => {
             Discover the difference with Resumeguru.pro. Optimize your resume, craft compelling cover letters, and take your job applications to the next level. Experience the power of AI-driven job application tools and join our community of successful job seekers today.
           </p>
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

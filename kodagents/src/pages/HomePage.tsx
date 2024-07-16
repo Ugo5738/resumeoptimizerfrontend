@@ -1,23 +1,22 @@
+import React from 'react';
 import BackgroundDesign from "../components/layout/BackgroundDesign";
+import MainContent from "../components/layout/MainContent";
 import Navbar from "../components/layout/Navbar";
 import PromotionalBanner from "../components/layout/PromotionalBanner";
-import MainContent from "../components/layout/MainContent";
 
-export default function HomePage() {
+const HomePage: React.FC = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
+    <div className="min-h-screen relative overflow-hidden">
       <BackgroundDesign />
-      <div className="flex-grow flex justify-center items-center p-6 lg:px-8">
-        <div className="relative w-full max-w-2xl">
+      <Navbar />
+      <main className="absolute inset-0 flex items-center justify-center overflow-hidden">
+        <div className="max-w-2xl w-full">
           <PromotionalBanner />
           <MainContent />
-          <div
-            className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-            aria-hidden="true"
-          ></div>
         </div>
-      </div>
+      </main>
     </div>
   );
-}
+};
+
+export default HomePage;

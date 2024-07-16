@@ -1,13 +1,10 @@
-import BackgroundDesign from "../components/layout/BackgroundDesign";
-import Navbar from "../components/layout/Navbar";
+import PageLayout from "../components/layout/PageLayout";
 
 const Pricing = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <BackgroundDesign />
-      <main className="flex flex-col items-center justify-center flex-1 p-4">
-        <h1 className="text-3xl font-bold mb-4">Pricing</h1>
+    <PageLayout>
+      <div className="flex flex-col items-center justify-center">
+        <h2 className="text-3xl font-bold mb-4">Pricing</h2>
         <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
           <p>
             At Resumeguru.pro, we offer competitive and flexible pricing plans to suit your needs. Whether you're a job seeker looking for basic optimization or a professional in need of comprehensive application support, we have a plan for you.
@@ -31,8 +28,8 @@ const Pricing = () => {
             Upgrade your plan at any time and unlock additional features designed to enhance your job search experience. Join Resumeguru.pro today and take the next step towards your career goals.
           </p>
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

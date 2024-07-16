@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import BackgroundDesign from '../components/layout/BackgroundDesign';
 import Navbar from '../components/layout/Navbar';
 import { trackEvent } from '../utils/analytics';
@@ -13,15 +13,13 @@ const Result: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
+    <div className="flex flex-col h-screen overflow-hidden">
       <BackgroundDesign />
-      <main className="flex-1 flex">
-        <div className="w-full h-full">
+      <Navbar />
+      <main className="flex-grow overflow-hidden">
         <Suspense fallback={<div>Loading...</div>}>
-            <EditablePDFViewer />
-          </Suspense>
-        </div>
+          <EditablePDFViewer />
+        </Suspense>
       </main>
     </div>
   );

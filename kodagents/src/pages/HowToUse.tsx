@@ -1,12 +1,9 @@
-import BackgroundDesign from "../components/layout/BackgroundDesign";
-import Navbar from "../components/layout/Navbar";
+import PageLayout from "../components/layout/PageLayout";
 
 const HowToUse = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <BackgroundDesign />
-      <main className="flex flex-col items-center justify-center flex-1 p-4">
+    <PageLayout>
+      <div className="flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold mb-4">How to Use Resumeguru.pro</h1>
         <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
           <p>
@@ -39,8 +36,8 @@ const HowToUse = () => {
             - Tailor your resume and cover letter for each job application.
           </p>
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

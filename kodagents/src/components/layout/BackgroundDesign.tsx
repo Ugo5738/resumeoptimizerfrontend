@@ -1,4 +1,4 @@
-const BackgroundDesign = () => {
+const BackgroundDesign: React.FC = () => {
   return (
     <>
       <div

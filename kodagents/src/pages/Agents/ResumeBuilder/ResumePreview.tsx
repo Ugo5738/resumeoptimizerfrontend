@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { saveAs } from "file-saver";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ResumeTemplate from "./ResumeTemplate";
 // import ResumeTemplate1 from "./ResumeTemplate1";
 import { onMessage } from "../../../services/websocketService";
@@ -37,7 +37,8 @@ const ResumePreview: React.FC = () => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/download-resume",
+        // "http://localhost:8000/api/download-resume",
+        "https://resumeguru.pro/api/download-resume",
         {
           responseType: "blob",
         }

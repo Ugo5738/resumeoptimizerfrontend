@@ -1,13 +1,10 @@
-import BackgroundDesign from "../components/layout/BackgroundDesign";
-import Navbar from "../components/layout/Navbar";
+import PageLayout from "../components/layout/PageLayout";
 
 const Terms = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <BackgroundDesign />
-      <main className="flex flex-col items-center justify-center flex-1 p-4">
-        <h1 className="text-3xl font-bold mb-4">Terms Of Use</h1>
+    <PageLayout>
+      <div className="flex flex-col items-center justify-center">
+        <h2 className="text-3xl font-bold mb-4">Terms Of Use</h2>
         <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
           <p>
             Welcome to Resumeguru.pro! These terms and conditions outline the rules and regulations for the use of our website and services.
@@ -133,7 +130,7 @@ const Terms = () => {
             <p>
               4.1. Any provisions of these Terms that by their nature should survive termination shall remain in effect after termination of your account or these Terms.
             </p>
-          </div> 
+          </div>
           <hr></hr>
           <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
           <div className="text-lg text-gray-600 space-y-6 max-w-3xl">
@@ -207,8 +204,8 @@ const Terms = () => {
             </p>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 
