@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaArrowCircleRight, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaArrowCircleRight, FaUndo } from "react-icons/fa";
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { useNavigate } from 'react-router-dom';
+import InsightsSection from '../../pages/InsightsSection';
 import { isWebSocketConnected, onMessage, sendMessage } from '../../services/websocketService';
+import '../../styles/base.css';
+import { CustomizationInfo, InitialOptimization } from '../../types/types';
 import { trackEvent, trackTiming } from '../../utils/analytics';
 import axiosInstance from '../../utils/axiosConfig';
 import { useAuth } from '../common/AuthContext';
@@ -12,15 +15,8 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 
-import '../../styles/base.css';
-
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
-
-interface CustomizationInfo {
-  notes: string[];
-  effectiveness_impact: number;
-}
 
 interface DocumentMessage {
   message: {
@@ -45,15 +41,30 @@ interface DocumentMessage {
   };
 }
 
+// Define a type for the document structure
+type DocumentType = 'resume' | 'cover_letter';
+
+interface Documents {
+  resume: { pdf: string; docx: string };
+  cover_letter: { pdf: string; docx: string };
+}
+
+interface DocumentUrls {
+  resume_pdf_url: string;
+  resume_docx_url: string;
+  cover_letter_pdf_url: string;
+  cover_letter_docx_url: string;
+}
 
 const EditablePDFViewer: React.FC = () => {
-  const [resumeUrl, setResumeUrl] = useState<string>('');
-  const [coverLetterUrl, setCoverLetterUrl] = useState<string>('');
-  const [resumeDocxUrl, setResumeDocxUrl] = useState<string>('');
-  const [coverLetterDocxUrl, setCoverLetterDocxUrl] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [currentDoc, setCurrentDoc] = useState<'resume' | 'cover_letter'>('resume');
+  const [documents, setDocuments] = useState<Documents>({
+    resume: { pdf: '', docx: '' },
+    cover_letter: { pdf: '', docx: '' }
+  });
+  const [originalDocuments, setOriginalDocuments] = useState<Documents | null>(null);
+  const [currentDoc, setCurrentDoc] = useState<DocumentType>('resume');
   const [customInstruction, setCustomInstruction] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pdfWidth, setPdfWidth] = useState(600); // Default width
@@ -65,10 +76,10 @@ const EditablePDFViewer: React.FC = () => {
   const [attempts, setAttempts] = useState(0);
   const maxAttempts = 3;
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const [initialOptimization, setInitialOptimization] = useState<DocumentMessage['message']['initial_optimization'] | null>(null);
+  const [initialOptimization, setInitialOptimization] = useState<InitialOptimization | null>(null);
   const [customizationHistory, setCustomizationHistory] = useState<CustomizationInfo[]>([]);
+
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
-  const [isInsightsOpen, setIsInsightsOpen] = useState(true);
   const { isPaid, usageCount, setUsageCount } = useAuth();
   const navigate = useNavigate();
 
@@ -102,8 +113,8 @@ const EditablePDFViewer: React.FC = () => {
   const placeholders = [
     "Enter text to update (e.g., 'Change job title to Senior Developer')",
     "Describe your edit (e.g., 'Replace contact number with 123-456-7890')",
-    "How can we improve this resume? (e.g., 'Update address to 123 Main St, Cityville')",
-    "What would you like to change? (e.g., 'Edit skills section to include Python and Java')",
+    // "How can we improve this resume? (e.g., 'Update address to 123 Main St, Cityville')",
+    // "What would you like to change? (e.g., 'Edit skills section to include Python and Java')",
     "Input your changes (e.g., 'Correct email to user@example.com')"
   ];
 
@@ -132,16 +143,27 @@ const EditablePDFViewer: React.FC = () => {
   useEffect(() => {
     if (isWebSocketConnected()) {
       onMessage((data: any) => {
-        console.log("Received WebSocket message:", data);
-        console.log("This is the message I am checking: ", data.message)
+        // console.log("Received WebSocket message:", data);
         if (data && data.message) {
-          const { documents, initial_optimization, customization_info } = data.message;
+          const { documents: receivedDocuments, initial_optimization, customization_info } = data.message;
 
-          if (documents) {
-            setResumeUrl(documents.resume_pdf_url || '');
-            setResumeDocxUrl(documents.resume_docx_url || '');
-            setCoverLetterUrl(documents.cover_letter_pdf_url || '');
-            setCoverLetterDocxUrl(documents.cover_letter_docx_url || '');
+          if (receivedDocuments) {
+            const newDocuments = {
+              resume: {
+                pdf: receivedDocuments.resume_pdf_url || documents.resume.pdf,
+                docx: receivedDocuments.resume_docx_url || documents.resume.docx
+              },
+              cover_letter: {
+                pdf: receivedDocuments.cover_letter_pdf_url || documents.cover_letter.pdf,
+                docx: receivedDocuments.cover_letter_docx_url || documents.cover_letter.docx
+              }
+            };
+            setDocuments(newDocuments);
+
+            // Store the original documents when first received
+            if (!originalDocuments) {
+              setOriginalDocuments(newDocuments);
+            }
             trackEvent('Document', 'Documents Received');
           }
 
@@ -151,6 +173,17 @@ const EditablePDFViewer: React.FC = () => {
 
           if (customization_info) {
             setCustomizationHistory(prevHistory => [customization_info, ...prevHistory]);
+            // Update only the specific document that was customized
+            const customizedDocType = data.message.metadata?.document_type as DocumentType | undefined;
+            if (customizedDocType && (customizedDocType === 'resume' || customizedDocType === 'cover_letter')) {
+              setDocuments(prevDocs => ({
+                ...prevDocs,
+                [customizedDocType]: {
+                  pdf: (receivedDocuments as DocumentUrls)[`${customizedDocType}_pdf_url`] || prevDocs[customizedDocType].pdf,
+                  docx: (receivedDocuments as DocumentUrls)[`${customizedDocType}_docx_url`] || prevDocs[customizedDocType].docx
+                }
+              }));
+            }
           }
 
           setLoading(false);
@@ -170,10 +203,15 @@ const EditablePDFViewer: React.FC = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [attempts]);
+  }, [attempts, documents, originalDocuments]);
 
-  const toggleInsights = () => {
-    setIsInsightsOpen(!isInsightsOpen);
+  const handleReset = () => {
+    if (originalDocuments) {
+      setDocuments(originalDocuments);
+      setCurrentDoc('resume');
+      setCustomizationHistory([]);
+      trackEvent('Document', 'Reset to Original');
+    }
   };
 
   useEffect(() => {
@@ -198,7 +236,7 @@ const EditablePDFViewer: React.FC = () => {
       sendMessage({
         type: 'customize_document',
         doc_type: currentDoc,
-        doc_url: currentDoc === 'resume' ? resumeUrl : coverLetterUrl,
+        doc_url: documents[currentDoc].pdf,
         custom_instruction: customInstruction
       });
       const endTime = performance.now();
@@ -214,12 +252,6 @@ const EditablePDFViewer: React.FC = () => {
     setNumPages(numPages);
     setLoading(false);
     trackEvent('Document', 'Loaded Successfully', currentDoc);
-  };
-
-  const toggleDocument = () => {
-    const newDoc = currentDoc === 'resume' ? 'cover_letter' : 'resume';
-    setCurrentDoc(newDoc);
-    trackEvent('Document', 'Toggled', newDoc);
   };
 
   const handleDownload = async (format: 'pdf' | 'docx' | 'both') => {
@@ -246,13 +278,10 @@ const EditablePDFViewer: React.FC = () => {
     };
 
     if (format === 'pdf' || format === 'both') {
-      await downloadFile(currentDoc === 'resume' ? resumeUrl : coverLetterUrl, `${currentDoc}.pdf`);
+      await downloadFile(documents[currentDoc].pdf, `${currentDoc}.pdf`);
     }
     if (format === 'docx' || format === 'both') {
-      await downloadFile(
-        currentDoc === 'resume' ? resumeDocxUrl : coverLetterDocxUrl,
-        `${currentDoc}.docx`
-      );
+      await downloadFile(documents[currentDoc].docx, `${currentDoc}.docx`);
     }
 
     trackEvent('Document', 'Download Completed', `${currentDoc}-${format}`);
@@ -264,6 +293,12 @@ const EditablePDFViewer: React.FC = () => {
         if (updateResponse.status === 200) {
           // Update the usage count in your state or context
           setUsageCount(updateResponse.data.usage_count);
+
+          // If the new usage count is 1 or greater, navigate to the upgrade page
+          if (updateResponse.data.usage_count >= 1) {
+            alert("You have reached your usage limit. Please upgrade to continue.");
+            navigate('/upgrade');
+          }
         } else {
           console.error('Failed to update usage count');
         }
@@ -330,56 +365,10 @@ const EditablePDFViewer: React.FC = () => {
   return (
     <div className="layout-container">
       <div className="left-column">
-        <div className={`insights-section ${isInsightsOpen ? 'open' : 'closed'}`}>
-          <div className="insights-header" onClick={toggleInsights}>
-            <h3 className="text-lg font-semibold">Here is how we optimized your resume:</h3>
-            {isInsightsOpen ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
-          {isInsightsOpen && (
-            <div className="insights-content">
-              {customizationHistory.map((customization, index) => (
-                <div key={index} className="insight-card">
-                  <h4>Customization {customizationHistory.length - index}:</h4>
-                  <ul className="list-disc pl-5">
-                    {customization.notes.map((note, i) => (
-                      <li key={i}>{note}</li>
-                    ))}
-                  </ul>
-                  {/* <p>Effectiveness Impact: {customization.effectiveness_impact}</p> */}
-                </div>
-              ))}
-              {initialOptimization && (
-                <div className="insight-card">
-                  <h4>Initial Optimization:</h4>
-                  <div>
-                    <h5>Job Match:</h5>
-                    <p>{initialOptimization.scores.job_match}%</p>
-                  </div>
-                  <div>
-                    <h5>Key Changes:</h5>
-                    <ul className="list-disc pl-5">
-                      {initialOptimization.improvement_summary.key_changes.map((change, i) => (
-                        <li key={i}>{change}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h5>ATS Optimization:</h5>
-                    <p>{initialOptimization.improvement_summary.ats_optimization}</p>
-                  </div>
-                  <div>
-                    <h5>Tailoring to Job:</h5>
-                    <p>{initialOptimization.improvement_summary.tailoring_to_job}</p>
-                  </div>
-                  {/* <div>
-                    <h5>Interview Potential:</h5>
-                    <p>{initialOptimization.scores.interview_potential}%</p>
-                  </div> */}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <InsightsSection
+          initialOptimization={initialOptimization}
+          customizationHistory={customizationHistory}
+        />
         <div className="input-section">
           <div className="edit-input-container">
             <textarea
@@ -403,7 +392,7 @@ const EditablePDFViewer: React.FC = () => {
         <div className="pdf-viewer-container" ref={containerRef}>
           <div className="pdf-scroll-container">
             <Document
-              file={currentDoc === 'resume' ? resumeUrl : coverLetterUrl}
+              file={documents[currentDoc].pdf}
               onLoadSuccess={onDocumentLoadSuccess}
               loading={<div>Loading PDF...</div>}
             >
@@ -418,33 +407,44 @@ const EditablePDFViewer: React.FC = () => {
           </div>
           <div className="pdf-controls">
             <button
-              onClick={toggleDocument}
-              className="bg-gray-200 text-gray-800 p-2 rounded"
+              onClick={() => setCurrentDoc(currentDoc === 'resume' ? 'cover_letter' : 'resume')}
+              className="theme-button-view p-2 rounded"
             >
               View {currentDoc === 'resume' ? 'Cover Letter' : 'Resume'}
             </button>
+
+            <button
+              onClick={handleReset}
+              className="theme-button-reset p-2 rounded"
+              title="Reset to original documents"
+            >
+              <FaUndo />
+            </button>
+
             <Dialog open={isDownloadModalOpen} onOpenChange={setIsDownloadModalOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className="bg-gray-200 text-gray-800 p-2 rounded"
+                  className="theme-button-download p-2 rounded"
                   disabled={!isPaid && usageCount >= 1}
                   onClick={() => {
                     if (!isPaid && usageCount >= 1) {
                       navigate('/upgrade');
+                    } else {
+                      setIsDownloadModalOpen(true);
                     }
                   }}
                 >
                   Download {currentDoc === 'resume' ? 'Resume' : 'Cover Letter'}
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Choose Download Format</DialogTitle>
                 </DialogHeader>
                 <div className="flex justify-around mt-4">
-                  <Button onClick={() => handleDownload('pdf')}>PDF</Button>
-                  <Button onClick={() => handleDownload('docx')}>DOCX</Button>
-                  <Button onClick={() => handleDownload('both')}>Both</Button>
+                  <Button className="custom-dialog-button" onClick={() => handleDownload('pdf')}>PDF</Button>
+                  <Button className="custom-dialog-button" onClick={() => handleDownload('docx')}>DOCX</Button>
+                  <Button className="custom-dialog-button" onClick={() => handleDownload('both')}>Both</Button>
                 </div>
               </DialogContent>
             </Dialog>

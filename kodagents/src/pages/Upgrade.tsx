@@ -117,7 +117,7 @@ const UpgradeAndPayment: React.FC = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <button
-                type="button" // Changed from 'submit' to 'button'
+                type="button"
                 disabled={true} // Always disabled
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-400 cursor-not-allowed"
 
