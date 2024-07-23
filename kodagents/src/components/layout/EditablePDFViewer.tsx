@@ -18,28 +18,28 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
-interface DocumentMessage {
-  message: {
-    documents: {
-      resume_pdf_url: string;
-      resume_docx_url: string;
-      cover_letter_pdf_url: string;
-      cover_letter_docx_url: string;
-    };
-    initial_optimization: {
-      improvement_summary: {
-        key_changes: string[];
-        ats_optimization: string;
-        tailoring_to_job: string;
-      };
-      scores: {
-        job_match: number;
-        interview_potential: number;
-      };
-    };
-    customization_info?: CustomizationInfo;
-  };
-}
+// interface DocumentMessage {
+//   message: {
+//     documents: {
+//       resume_pdf_url: string;
+//       resume_docx_url: string;
+//       cover_letter_pdf_url: string;
+//       cover_letter_docx_url: string;
+//     };
+//     initial_optimization: {
+//       improvement_summary: {
+//         key_changes: string[];
+//         ats_optimization: string;
+//         tailoring_to_job: string;
+//       };
+//       scores: {
+//         job_match: number;
+//         interview_potential: number;
+//       };
+//     };
+//     customization_info?: CustomizationInfo;
+//   };
+// }
 
 // Define a type for the document structure
 type DocumentType = 'resume' | 'cover_letter';
