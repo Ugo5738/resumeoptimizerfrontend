@@ -12,15 +12,15 @@ import EmailVerification from "./pages/EmailVerification";
 import HowToUse from "./pages/HowToUse";
 import JobDetails from "./pages/JobDetails";
 import Login from "./pages/Login";
-import PaymentFailed from "./pages/PaymentFailed";
+import PaymentFailed from "./pages/PaymentFailedSub";
 import PaymentForm from "./pages/PaymentForm";
-import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentSuccess from "./pages/PaymentSuccessSub";
 import PaymentVerification from './pages/PaymentVerification';
 import Pricing from "./pages/Pricing";
 import Result from "./pages/Result";
 import Signup from "./pages/SignUp";
 import Terms from "./pages/Terms";
-import Upgrade from "./pages/Upgrade";
+import Upgrade from "./pages/UpgradeSub";
 import UploadResume from "./pages/UploadResume";
 import VerifyEmail from "./pages/Verify";
 

@@ -21,12 +21,13 @@ const PaymentVerification: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const reference = params.get('reference');
+    const provider = params.get('provider') || 'paystack';
 
     if (reference) {
       const verifyAndFetchDetails = async () => {
         try {
           // First, verify the payment
-          const verifyResponse = await axiosInstance.get(`/api/payments/verify/?reference=${reference}`);
+          const verifyResponse = await axiosInstance.get(`/api/payments/verify/?reference=${reference}&provider=${provider}`);
 
           if (verifyResponse.data.status === 'success') {
             // If verification is successful, fetch payment details

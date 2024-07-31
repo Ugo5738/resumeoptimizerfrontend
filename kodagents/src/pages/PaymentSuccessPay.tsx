@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import '../styles/base.css';
 import axiosInstance from '../utils/axiosConfig';
 
 interface PaymentDetails {
@@ -19,12 +20,13 @@ const PaymentSuccess: React.FC = () => {
     const fetchPaymentDetails = async () => {
       const params = new URLSearchParams(location.search);
       const reference = params.get('reference');
+      const provider = params.get('provider') || 'stripe';
 
       if (reference) {
         try {
-          const response = await axiosInstance.get(`/api/payments/details/${reference}/`);
+          const response = await axiosInstance.get(`/api/payments/verify/?reference=${reference}&provider=${provider}`);
           if (response.data.status === 'success') {
-            setPaymentDetails(response.data);
+            setPaymentDetails(response.data.details);
           } else {
             setError(response.data.message || 'Failed to fetch payment details');
           }
@@ -47,7 +49,7 @@ const PaymentSuccess: React.FC = () => {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Loading payment details...</h2>
+          <h2 className="text-2xl font-bold mb-4">Verifying payment...</h2>
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
         </div>
       </div>
@@ -56,15 +58,15 @@ const PaymentSuccess: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md text-center">
-          <h2 className="text-3xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-xl mb-4">{error}</p>
+      <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-100 to-indigo-100">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center max-w-md w-full">
+          <h2 className="text-xl text-red-600 mb-4">Payment Verification Failed</h2>
+          <p className="text-l mb-6 text-gray-700">{error}</p>
           <button
-            onClick={() => navigate('/')}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            onClick={() => navigate('/upgrade')}
+            className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Return to Home
+            Try Again
           </button>
         </div>
       </div>
@@ -76,18 +78,18 @@ const PaymentSuccess: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md text-center">
-        <h2 className="text-3xl font-bold text-green-600 mb-4">Payment Successful!</h2>
-        <div className="mb-4">
-          <p className="text-xl">Amount: {paymentDetails.amount} {paymentDetails.currency}</p>
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-100 to-indigo-100">
+      <div className="bg-white p-8 rounded-lg shadow-md text-center max-w-md w-full">
+        <h2 className="text-xl text-green-600 mb-4">Payment Successful!</h2>
+        <div className="mb-6">
+          <p className="text-xl text-gray-700">Amount: {paymentDetails.amount} {paymentDetails.currency.toUpperCase()}</p>
           <p className="text-gray-600">Reference: {paymentDetails.reference}</p>
         </div>
         <button
+          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           onClick={() => navigate('/')}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
         >
-          Return to Home
+          Return to HomePage
         </button>
       </div>
     </div>

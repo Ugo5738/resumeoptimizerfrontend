@@ -1,4 +1,6 @@
-import React from "react";
+import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import React, { useEffect, useState } from "react";
 import { FaCheck, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/common/AuthContext';
@@ -6,39 +8,111 @@ import BackgroundDesign from "../components/layout/BackgroundDesign";
 import Navbar from "../components/layout/Navbar";
 import axiosInstance from '../utils/axiosConfig';
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+interface PaymentFormProps {
+  amount: number;
+  currency: string;
+  onPaymentSuccess: (paymentIntent: any) => void;
+  onPaymentError: (errorMessage: string) => void;
+}
+
+const PaymentForm: React.FC<PaymentFormProps> = ({ amount, currency, onPaymentSuccess, onPaymentError }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    if (!stripe || !elements) {
+      onPaymentError('Stripe has not been properly initialized');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post('/api/payments/initiate/', {
+        amount,
+        currency,
+        provider: 'stripe',
+      });
+
+      const { client_secret } = response.data;
+
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        throw new Error("Card element not found");
+      }
+
+      const result = await stripe.confirmCardPayment(client_secret, {
+        payment_method: {
+          card: cardElement,
+        },
+      });
+
+      if (result.error) {
+        onPaymentError(result.error.message || "An error occurred");
+      } else if (result.paymentIntent) {
+        onPaymentSuccess(result.paymentIntent);
+      }
+    } catch (error) {
+      onPaymentError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <CardElement />
+      <button
+        type="submit"
+        disabled={!stripe || loading}
+        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+          <FaLock className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+        </span>
+        {loading ? 'Processing...' : 'Pay with Stripe'}
+      </button>
+    </form>
+  );
+};
+
 const UpgradeAndPayment: React.FC = () => {
   const { isLoggedIn, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [paymentMethod, setPaymentMethod] = useState('paystack');
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchCSRFToken = async () => {
       try {
         await axiosInstance.get('/api/csrf-cookie/');
         console.log('CSRF token fetched successfully');
       } catch (error) {
         console.error('Error fetching CSRF token:', error);
+        setError('Failed to initialize payment. Please try again.');
       }
     };
 
     fetchCSRFToken();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePaystackPayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    console.log('Attempting to submit payment');
+    console.log('Attempting to submit Paystack payment');
 
     try {
-      const response = await axiosInstance.post('/api/payments/initiate/', JSON.stringify({
+      const response = await axiosInstance.post('/api/payments/initiate/', {
         amount: '9.99',
-        currency: 'NGN', // 'USD',
-      }), {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        currency: 'NGN',
+        provider: 'paystack',
       });
       console.log('Payment initiation response:', response.data);
 
@@ -54,6 +128,14 @@ const UpgradeAndPayment: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleStripePaymentSuccess = (paymentIntent: any) => {
+    navigate(`/payment-success?reference=${paymentIntent.id}&provider=stripe`);
+  };
+
+  const handleStripePaymentError = (errorMessage: string) => {
+    navigate('/payment-failed', { state: { message: errorMessage } });
   };
 
   const handleMaybeLater = () => {
@@ -114,7 +196,62 @@ const UpgradeAndPayment: React.FC = () => {
             </div>
           )}
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio"
+                  name="paymentMethod"
+                  value="stripe"
+                  checked={paymentMethod === 'stripe'}
+                  onChange={() => setPaymentMethod('stripe')}
+                />
+                <span className="ml-2">Pay with Stripe</span>
+              </label>
+            </div>
+            <div>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio"
+                  name="paymentMethod"
+                  value="paystack"
+                  checked={paymentMethod === 'paystack'}
+                  onChange={() => setPaymentMethod('paystack')}
+                />
+                <span className="ml-2">Pay with Paystack</span>
+              </label>
+            </div>
+          </div>
+
+          {paymentMethod === 'paystack' ? (
+            <form className="space-y-4" onSubmit={handlePaystackPayment}>
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                    <FaLock className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+                  </span>
+                  {loading ? 'Processing...' : 'Pay with Paystack'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <Elements stripe={stripePromise}>
+              <PaymentForm
+                amount={9.99}
+                currency="USD"
+                onPaymentSuccess={handleStripePaymentSuccess}
+                onPaymentError={handleStripePaymentError}
+              />
+            </Elements>
+          )}
+
+          {/* <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <button
                 type="button"
@@ -132,7 +269,7 @@ const UpgradeAndPayment: React.FC = () => {
                 {loading ? 'Processing...' : 'Upgrade Now'}
               </button>
             </div>
-          </form>
+          </form> */}
 
           <button
             onClick={handleMaybeLater}
