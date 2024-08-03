@@ -97,7 +97,7 @@ const UpgradeAndPayment: React.FC = () => {
     const fetchCSRFToken = async () => {
       try {
         await axiosInstance.get('/api/csrf-cookie/');
-        console.log('CSRF token fetched successfully');
+        // console.log('CSRF token fetched successfully');
       } catch (error) {
         console.error('Error fetching CSRF token:', error);
         setError('Failed to initialize payment. Please try again.');

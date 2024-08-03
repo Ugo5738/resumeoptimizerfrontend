@@ -92,9 +92,9 @@ const UpgradeAndPayment: React.FC = () => {
     const fetchCSRFToken = async () => {
       try {
         await axiosInstance.get('/api/csrf-cookie/');
-        console.log('CSRF token fetched successfully');
+        // console.log('CSRF token fetched successfully');
       } catch (error) {
-        console.error('Error fetching CSRF token:', error);
+        // console.error('Error fetching CSRF token:', error);
         setError('Failed to initialize payment. Please try again.');
       }
     };
@@ -106,7 +106,7 @@ const UpgradeAndPayment: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    console.log('Attempting to submit Paystack payment');
+    // console.log('Attempting to submit Paystack payment');
 
     try {
       const response = await axiosInstance.post('/api/payments/initiate/', {
@@ -114,10 +114,10 @@ const UpgradeAndPayment: React.FC = () => {
         currency: 'NGN',
         provider: 'paystack',
       });
-      console.log('Payment initiation response:', response.data);
+      // console.log('Payment initiation response:', response.data);
 
       if (response.data.authorization_url) {
-        console.log('Redirecting to payment gateway');
+        // console.log('Redirecting to payment gateway');
         window.location.href = response.data.authorization_url;
       } else {
         setError('Failed to initialize payment. Please try again.');

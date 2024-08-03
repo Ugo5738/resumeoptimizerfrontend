@@ -12,12 +12,12 @@ export const connectWebSocket = (url: string): Promise<void> => {
     socket = new WebSocket(url);
 
     socket.onopen = () => {
-      console.log('WebSocket connected');
+      // console.log('WebSocket connected');
       resolve();
     };
 
     socket.onclose = () => {
-      console.log('WebSocket disconnected');
+      // console.log('WebSocket disconnected');
       socket = null;
       connectedPromise = null;
     };

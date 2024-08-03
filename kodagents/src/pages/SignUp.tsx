@@ -264,7 +264,7 @@ const Signup: React.FC<SignupProps> = () => {
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={() => {
-                    console.log('Login Failed');
+                    // console.log('Login Failed');
                     setErrors({ general: "Google login failed. Please try again."});
                   }}
                   useOneTap={true}

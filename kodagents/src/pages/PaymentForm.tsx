@@ -17,7 +17,7 @@ const PaymentForm: React.FC = () => {
     const fetchCSRFToken = async () => {
       try {
         await axiosInstance.get('/api/csrf-cookie/');
-        console.log('CSRF token fetched successfully');
+        // console.log('CSRF token fetched successfully');
       } catch (error) {
         console.error('Error fetching CSRF token:', error);
       }
@@ -30,7 +30,7 @@ const PaymentForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    console.log('PaymentForm: Attempting to submit payment');
+    // console.log('PaymentForm: Attempting to submit payment');
 
     try {
       const response = await axiosInstance.post('/api/payments/initiate/', JSON.stringify({
@@ -41,10 +41,10 @@ const PaymentForm: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
-      console.log('PaymentForm: Payment initiation response:', response.data);
+      // console.log('PaymentForm: Payment initiation response:', response.data);
 
       if (response.data.authorization_url) {
-        console.log('PaymentForm: Redirecting to payment gateway');
+        // console.log('PaymentForm: Redirecting to payment gateway');
         window.location.href = response.data.authorization_url;
       } else {
         setError('Failed to initialize payment. Please try again.');

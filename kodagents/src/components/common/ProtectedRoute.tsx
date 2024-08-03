@@ -19,7 +19,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isLoggedIn) {
-    console.log('ProtectedRoute: User not logged in, redirecting to /login');
+    // console.log('ProtectedRoute: User not logged in, redirecting to /login');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

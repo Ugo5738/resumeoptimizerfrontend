@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${token}`;
     connectWebSocket(websocketUrl)
       .then(() => {
-        console.log("WebSocket connected successfully");
+        // console.log("WebSocket connected successfully");
       })
       .catch((error) => {
         console.error("Failed to connect WebSocket:", error);
