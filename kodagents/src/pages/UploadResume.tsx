@@ -13,7 +13,7 @@ const UploadResume: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
-  const { isLoggedIn, usageCount, checkUsageCount } = useAuth();
+  const { isLoggedIn, isPaid, usageCount, hasFreeAccess, checkUsageCount } = useAuth();
 
   useEffect(() => {
     const initializeComponent = async () => {
@@ -38,13 +38,22 @@ const UploadResume: React.FC = () => {
       trackEvent("Resume", "File Selected", file.type);
     }
   };
+
   const handleSubmit = async () => {
     if (!isLoggedIn) {
       navigate("/login", { state: { from: "upload" } });
       return;
     }
 
-    if (usageCount >= 1) {
+    const freeAccessLimit = 100;
+    const regularUserLimit = 1;
+
+    if (hasFreeAccess && usageCount >= freeAccessLimit) {
+      navigate("/upgrade", { state: { from: "upload" } });
+      return;
+    }
+
+    if (!hasFreeAccess && !isPaid && usageCount >= regularUserLimit) {
       navigate("/upgrade", { state: { from: "upload" } });
       return;
     }
@@ -121,7 +130,7 @@ const UploadResume: React.FC = () => {
                       type="file"
                       onChange={handleResumeUpload}
                       className="sr-only"
-                      accept=".pdf,.doc,.docx"
+                      accept=".pdf"  // ,.doc,.docx"
                     />
                   </label>
                 </div>
@@ -129,11 +138,23 @@ const UploadResume: React.FC = () => {
                   onClick={handleSubmit}
                   className="w-full rounded-md bg-indigo-600 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition duration-150 ease-in-out"
                 >
-                  {!isLoggedIn ? "Login to Continue" : usageCount >= 1 ? "Upgrade to Continue" : "Upload Resume"}
+                  {!isLoggedIn ? "Login to Continue" :
+                    (hasFreeAccess && usageCount >= 100) || (!hasFreeAccess && !isPaid && usageCount >= 1)
+                      ? "Upgrade to Continue"
+                      : "Upload Resume"}
                 </button>
-                {isLoggedIn && usageCount >= 1 && (
+                {isLoggedIn && (
                   <p className="mt-4 text-sm text-gray-600">
-                    You've used your free trial. Upgrade to continue optimizing your resume.
+                    {hasFreeAccess
+                      ? (usageCount >= 100
+                          ? "You've used all your free downloads. Upgrade to continue optimizing your resume."
+                          : `You have ${Math.max(0, 100 - usageCount)} free downloads remaining.`)
+                      : isPaid
+                        ? "You have unlimited downloads."
+                        : (usageCount >= 1
+                            ? "You've used your free trial. Upgrade to continue optimizing your resume."
+                            : `You have 1 free downloads remaining.`)
+                    }
                   </p>
                 )}
               </>

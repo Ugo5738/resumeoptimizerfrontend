@@ -1,89 +1,27 @@
-import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import React, { useEffect, useState } from "react";
-import { FaCheck, FaLock } from 'react-icons/fa';
+import { FaCheck, FaInfoCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/common/AuthContext';
 import BackgroundDesign from "../components/layout/BackgroundDesign";
+import CheckoutForm from "../components/layout/CheckoutForm";
 import Navbar from "../components/layout/Navbar";
 import axiosInstance from '../utils/axiosConfig';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-interface PaymentFormProps {
-  onSubscriptionSuccess: (subscriptionId: string) => void;
-  onSubscriptionError: (errorMessage: string) => void;
-}
-
-// const PaymentForm: React.FC<PaymentFormProps> = ({ amount, currency, onPaymentSuccess, onPaymentError }) => {
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubscriptionSuccess, onSubscriptionError }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-
-    if (!stripe || !elements) {
-      onSubscriptionError('Stripe has not been properly initialized');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.post('/api/payments/initiate/', {
-        provider: 'stripe',
-        payment_type: 'subscription'
-      });
-
-      const { client_secret, subscription_id } = response.data;
-
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) {
-        throw new Error("Card element not found");
-      }
-
-      const result = await stripe.confirmCardPayment(client_secret, {
-        payment_method: {
-          card: cardElement,
-        },
-      });
-
-      if (result.error) {
-        onSubscriptionError(result.error.message || "An error occurred");
-      } else if (result.paymentIntent) {
-        onSubscriptionSuccess(subscription_id);
-      }
-    } catch (error) {
-      onSubscriptionError('An unexpected error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-gray-50 p-4 rounded-md">
-        <CardElement className="p-2 bg-white rounded border border-gray-300" />
-      </div>
-      <button
-        type="submit"
-        disabled={!stripe || loading}
-        className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      >
-        <FaLock className="h-5 w-5 text-indigo-300 mr-2" />
-        {loading ? 'Processing...' : 'Subscribe with Stripe'}
-      </button>
-    </form>
-  );
-};
-
 const UpgradeAndPayment: React.FC = () => {
   const { isLoggedIn, isLoading } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = React.useState<string | null>(null);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  const subscriptionPrice = 9.99;
+  const taxAmount = 0.00;
+  const totalAmount = subscriptionPrice + taxAmount;
 
   useEffect(() => {
     const fetchCSRFToken = async () => {
@@ -97,7 +35,31 @@ const UpgradeAndPayment: React.FC = () => {
     };
 
     fetchCSRFToken();
-  }, []);
+
+    // Fetch user's email and location
+    const fetchUserData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/auth/user');
+        const { email, country, region } = response.data;
+        setUserEmail(email);
+        setSelectedCountry(country || ''); // Ensure it's not null or undefined
+        setSelectedRegion(region || ''); // Ensure it's not null or undefined
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchUserData();
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (selectedCountry && !selectedRegion) {
+      // Reset the selected region when the country changes and no region is selected
+      setSelectedRegion('');
+    }
+  }, [selectedCountry, selectedRegion]);
 
   const handleStripeSubscriptionSuccess = (subscriptionId: any) => {
     navigate(`/payment-success?subscription_id=${subscriptionId}&provider=stripe`);
@@ -125,98 +87,81 @@ const UpgradeAndPayment: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <BackgroundDesign />
       <Navbar />
-      <main className="flex-grow flex justify-center items-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
-          <div>
-            <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
-              Upgrade to Premium
-            </h2>
-            <p className="mt-4 text-center text-sm text-gray-600">
-              Unlock all features and take your career to the next level
-            </p>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center space-x-4">
-              <FaCheck className="text-green-500 flex-shrink-0" />
-              <span className="text-gray-700">Unlimited resume optimizations</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <FaCheck className="text-green-500 flex-shrink-0" />
-              <span className="text-gray-700">AI-powered cover letter generation</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <FaCheck className="text-green-500 flex-shrink-0" />
-              <span className="text-gray-700">Priority support</span>
-            </div>
-          </div>
-
-          <div className="mt-4 text-center">
-            <span className="text-4xl font-bold text-indigo-700">$9.99</span>
-            <span className="text-gray-600">/month</span>
-          </div>
-
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{error}</span>
-            </div>
-          )}
-
-          {/* <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
+      <main className="flex-grow flex justify-center items-start px-4 sm:px-6 lg:px-8 pt-16">
+        <div className="max-w-4xl w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+          <div className="flex justify-between items-start">
+            <div className="w-1/2 pr-8">
+              <h2 className="text-2xl font-bold text-indigo-700 mb-6">
+                Subscribe to Premium Plan
+              </h2>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center space-x-2">
+                  <FaCheck className="text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Unlimited resume optimizations</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FaCheck className="text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">AI-powered cover letter generation</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FaCheck className="text-green-500 flex-shrink-0" />
+                  <span className="text-gray-700">Priority support</span>
+                </div>
+              </div>
+              <div className="mb-10">
+                <span className="text-4xl font-bold text-indigo-700">$9.99</span>
+                <span className="text-gray-600">/month</span>
+              </div>
+              <div className="mb-10 bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2">Pricing Breakdown</h3>
+                <div className="flex justify-between mb-2">
+                  <span>Premium Plan Subscription</span>
+                  <span>${subscriptionPrice.toFixed(2)}</span>
+                </div>
+                <div className="text-sm text-gray-500 mb-2">Billed monthly</div>
+                <div className="flex justify-between mb-2">
+                  <span>Subtotal</span>
+                  <span>${subscriptionPrice.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="flex items-center">
+                    Tax <FaInfoCircle className="ml-1 text-gray-400" />
+                  </span>
+                  <span>${taxAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-semibold mt-2 pt-2 border-t">
+                  <span>Total due today</span>
+                  <span>${totalAmount.toFixed(2)}</span>
+                </div>
+              </div>
               <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={handleMaybeLater}
+                className="text-indigo-600 hover:text-indigo-500 font-medium"
               >
-                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <FaLock className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
-                </span>
-                {loading ? 'Processing...' : 'Upgrade Now'}
+                Maybe Later
               </button>
             </div>
-          </form> */}
-
-          {!showPaymentForm ? (
-            <button
-              onClick={() => setShowPaymentForm(true)}
-              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <FaLock className="h-5 w-5 text-indigo-300 mr-2" />
-              Upgrade Now
-            </button>
-          ) : (
-            <div className="mt-8">
+            <div className="w-1/2 pl-8 border-l">
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                  <span className="block sm:inline">{error}</span>
+                </div>
+              )}
               <Elements stripe={stripePromise}>
-                <PaymentForm
+                <CheckoutForm
                   onSubscriptionSuccess={handleStripeSubscriptionSuccess}
                   onSubscriptionError={handleStripeSubscriptionError}
+                  selectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                  selectedRegion={selectedRegion}
+                  setSelectedRegion={setSelectedRegion}
+                  userEmail={userEmail}
                 />
               </Elements>
             </div>
-          )}
-
-          <button
-            onClick={handleMaybeLater}
-            className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Maybe Later
-          </button>
-
-          <div>
-            <p className="text-center text-sm text-gray-500">
-              By upgrading, you agree to our{' '}
-              <a href="/terms" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href="/privacy" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Privacy Policy
-              </a>
-            </p>
           </div>
         </div>
       </main>

@@ -8,10 +8,12 @@ interface AuthContextType {
   isLoggedIn: boolean;
   isPaid: boolean;
   usageCount: number;
+  hasFreeAccess: boolean;
   isLoading: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setIsPaid: (isPaid: boolean) => void;
   setUsageCount: (count: number) => void;
+  setHasFreeAccess: (hasFreeAccess: boolean) => void;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   checkUsageCount: () => Promise<void>;
@@ -25,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
+  const [hasFreeAccess, setHasFreeAccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
@@ -94,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await logout();
         }
       }
-    }, 5 * 60 * 1000);
+    }, 5 * 60 * 1000);  // 5 minutes
 
     return () => clearInterval(intervalId);
   }, [isLoggedIn]);
@@ -104,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await axiosInstance.get('/api/auth/payment-status/');
       setIsPaid(response.data.is_paid);
       setUsageCount(response.data.usage_count);
+      setHasFreeAccess(response.data.has_free_access);
     } catch (error) {
       console.error('Error fetching usage count:', error);
     }
@@ -152,10 +156,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoggedIn,
       isPaid,
       usageCount,
+      hasFreeAccess,
       isLoading,
       setIsLoggedIn,
       setIsPaid,
       setUsageCount,
+      setHasFreeAccess,
       login,
       logout,
       checkUsageCount
