@@ -1,41 +1,55 @@
-import { jwtDecode } from 'jwt-decode';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { connectWebSocket, disconnectWebSocket } from '../../services/websocketService';
-import axiosInstance from '../../utils/axiosConfig';
+import { jwtDecode } from "jwt-decode";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+} from "../../services/websocketService";
+import axiosInstance from "../../utils/axiosConfig";
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  isPaid: boolean;
-  usageCount: number;
-  hasFreeAccess: boolean;
+  tier: string | null;
+  needsPayment: boolean;
+  remainingUses: {
+    download: number;
+    creation: number;
+    customization: number;
+  };
   isLoading: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
-  setIsPaid: (isPaid: boolean) => void;
-  setUsageCount: (count: number) => void;
-  setHasFreeAccess: (hasFreeAccess: boolean) => void;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
-  checkUsageCount: () => Promise<void>;
+  checkUsageStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/signup', '/login', '/verify-email']; // Add other public routes as needed
+const publicRoutes = ["/signup", "/login", "/verify-email"]; // Add other public routes as needed
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
-  const [usageCount, setUsageCount] = useState(0);
-  const [hasFreeAccess, setHasFreeAccess] = useState(false);
+  const [tier, setTier] = useState<string | null>(null);
+  const [needsPayment, setNeedsPayment] = useState(false);
+  const [remainingUses, setRemainingUses] = useState({
+    download: 0,
+    creation: 0,
+    customization: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   const checkAuth = async () => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
 
-    if (!accessToken || !refreshToken || publicRoutes.includes(location.pathname)) {
+    if (
+      !accessToken ||
+      !refreshToken ||
+      publicRoutes.includes(location.pathname)
+    ) {
       setIsLoggedIn(false);
       setIsLoading(false);
       return;
@@ -44,15 +58,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await verifyAndRefreshToken();
       setIsLoggedIn(true);
-      await checkUsageCount();
-      // const websocketUrl = `ws://localhost:8000/ws/resume/?token=${accessToken}`;
-      const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${accessToken}`;
+      await checkUsageStatus();
+      const websocketUrl = `ws://localhost:8000/ws/resume/?token=${accessToken}`;
+      // const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${accessToken}`;
       await connectWebSocket(websocketUrl);
     } catch (error) {
-      console.error('Authentication failed:', error);
+      console.error("Authentication failed:", error);
       setIsLoggedIn(false);
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     }
 
     setIsLoading(false);
@@ -63,11 +77,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [location.pathname]);
 
   const verifyAndRefreshToken = async () => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
 
     if (!accessToken || !refreshToken) {
-      throw new Error('No tokens found');
+      throw new Error("No tokens found");
     }
 
     const decodedToken: any = jwtDecode(accessToken);
@@ -75,14 +89,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (decodedToken.exp < currentTime) {
       try {
-        const response = await axiosInstance.post('/api/auth/token/refresh/', { refresh: refreshToken });
-        localStorage.setItem('accessToken', response.data.access);
+        const response = await axiosInstance.post("/api/auth/token/refresh/", {
+          refresh: refreshToken,
+        });
+        localStorage.setItem("accessToken", response.data.access);
         if (response.data.refresh) {
-          localStorage.setItem('refreshToken', response.data.refresh);
+          localStorage.setItem("refreshToken", response.data.refresh);
         }
         connectToWebSocket(response.data.access);
       } catch (error) {
-        throw new Error('Token refresh failed');
+        throw new Error("Token refresh failed");
       }
     }
   };
@@ -93,29 +109,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           await verifyAndRefreshToken();
         } catch (error) {
-          console.error('Token refresh failed:', error);
+          console.error("Token refresh failed:", error);
           await logout();
         }
       }
-    }, 5 * 60 * 1000);  // 5 minutes
+    }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(intervalId);
   }, [isLoggedIn]);
 
-  const checkUsageCount = async () => {
+  const checkUsageStatus = async () => {
     try {
-      const response = await axiosInstance.get('/api/auth/payment-status/');
-      setIsPaid(response.data.is_paid);
-      setUsageCount(response.data.usage_count);
-      setHasFreeAccess(response.data.has_free_access);
+      const response = await axiosInstance.get("/api/auth/payment-status/");
+      setTier(response.data.tier);
+      setNeedsPayment(response.data.needs_payment);
+      setRemainingUses(response.data.remaining_uses);
     } catch (error) {
-      console.error('Error fetching usage count:', error);
+      console.error("Error fetching usage status:", error);
     }
   };
 
   const connectToWebSocket = (token: string) => {
-    // const websocketUrl = `ws://localhost:8000/ws/resume/?token=${token}`;
-    const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${token}`;
+    const websocketUrl = `ws://localhost:8000/ws/resume/?token=${token}`;
+    // const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${token}`;
     connectWebSocket(websocketUrl)
       .then(() => {
         // console.log("WebSocket connected successfully");
@@ -126,46 +142,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (accessToken: string, refreshToken: string) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
     setIsLoggedIn(true);
-    await checkUsageCount();
+    await checkUsageStatus();
     connectToWebSocket(accessToken);
   };
 
   const logout = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken) {
       try {
-        await axiosInstance.post('/api/auth/logout/', { refresh_token: refreshToken });
+        await axiosInstance.post("/api/auth/logout/", {
+          refresh_token: refreshToken,
+        });
       } catch (error) {
-        console.error('Error during logout:', error);
+        console.error("Error during logout:", error);
       }
     }
 
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     setIsLoggedIn(false);
-    setIsPaid(false);
-    setUsageCount(0);
     disconnectWebSocket();
   };
 
   return (
-    <AuthContext.Provider value={{
-      isLoggedIn,
-      isPaid,
-      usageCount,
-      hasFreeAccess,
-      isLoading,
-      setIsLoggedIn,
-      setIsPaid,
-      setUsageCount,
-      setHasFreeAccess,
-      login,
-      logout,
-      checkUsageCount
-    }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        tier,
+        needsPayment,
+        remainingUses,
+        isLoading,
+        setIsLoggedIn,
+        login,
+        logout,
+        checkUsageStatus,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -174,7 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

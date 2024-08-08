@@ -1,9 +1,8 @@
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { useEffect, useState } from 'react';
-import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
-import { FaLock } from 'react-icons/fa';
-import axiosInstance from '../../utils/axiosConfig';
-
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { useEffect, useState } from "react";
+import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
+import { FaLock } from "react-icons/fa";
+import axiosInstance from "../../utils/axiosConfig";
 
 interface PaymentFormProps {
   onSubscriptionSuccess: (subscriptionId: string) => void;
@@ -15,7 +14,6 @@ interface PaymentFormProps {
   userEmail: string;
 }
 
-
 const CheckoutForm: React.FC<PaymentFormProps> = ({
   onSubscriptionSuccess,
   onSubscriptionError,
@@ -23,16 +21,16 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
   setSelectedCountry,
   selectedRegion,
   setSelectedRegion,
-  userEmail
+  userEmail,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [cardholderName, setCardholderName] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [phone, setPhone] = useState('');
+  const [cardholderName, setCardholderName] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [phone, setPhone] = useState("");
   const [saveInfo, setSaveInfo] = useState(false);
 
   useEffect(() => {
@@ -50,15 +48,16 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
     setLoading(true);
 
     if (!stripe || !elements) {
-      onSubscriptionError('Stripe has not been properly initialized');
+      onSubscriptionError("Stripe has not been properly initialized");
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axiosInstance.post('/api/payments/initiate/', {
-        provider: 'stripe',
-        payment_type: 'subscription'
+      const response = await axiosInstance.post("/api/payments/initiate/", {
+        tier: "essential",
+        provider: "stripe",
+        payment_type: "subscription",
       });
 
       const { client_secret, subscription_id } = await response.data;
@@ -92,7 +91,7 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
         onSubscriptionSuccess(subscription_id);
       }
     } catch (error) {
-      onSubscriptionError('An unexpected error occurred. Please try again.');
+      onSubscriptionError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -216,7 +215,8 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
       {saveInfo && (
         <div>
           <p className="text-sm text-gray-600 mb-2">
-            Enter your phone number to create a Link account and pay faster on ResumeGuru, LLC and everywhere Link is accepted.
+            Enter your phone number to create a Link account and pay faster on
+            ResumeGuru, LLC and everywhere Link is accepted.
           </p>
           <div className="flex">
             <input
@@ -239,15 +239,19 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
         className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         <FaLock className="h-5 w-5 text-indigo-300 mr-2" />
-        {loading ? 'Processing...' : 'Subscribe'}
+        {loading ? "Processing..." : "Subscribe"}
       </button>
 
       <div className="text-center text-sm text-gray-500">
         <p>Powered by Stripe</p>
         <p>
-          <a href="/terms" className="text-indigo-600 hover:text-indigo-500">Terms</a>
-          {' • '}
-          <a href="/privacy" className="text-indigo-600 hover:text-indigo-500">Privacy</a>
+          <a href="/terms" className="text-indigo-600 hover:text-indigo-500">
+            Terms
+          </a>
+          {" • "}
+          <a href="/privacy" className="text-indigo-600 hover:text-indigo-500">
+            Privacy
+          </a>
         </p>
       </div>
     </form>
