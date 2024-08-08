@@ -59,8 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await verifyAndRefreshToken();
       setIsLoggedIn(true);
       await checkUsageStatus();
-      const websocketUrl = `ws://localhost:8000/ws/resume/?token=${accessToken}`;
-      // const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${accessToken}`;
+      // const websocketUrl = `ws://localhost:8000/ws/resume/?token=${accessToken}`;
+      const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${accessToken}`;
       await connectWebSocket(websocketUrl);
     } catch (error) {
       console.error("Authentication failed:", error);
@@ -130,8 +130,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const connectToWebSocket = (token: string) => {
-    const websocketUrl = `ws://localhost:8000/ws/resume/?token=${token}`;
-    // const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${token}`;
+    // const websocketUrl = `ws://localhost:8000/ws/resume/?token=${token}`;
+    const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${token}`;
     connectWebSocket(websocketUrl)
       .then(() => {
         // console.log("WebSocket connected successfully");

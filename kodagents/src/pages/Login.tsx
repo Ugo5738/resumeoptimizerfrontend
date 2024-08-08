@@ -112,11 +112,19 @@ const Login: React.FC = () => {
         credential: credentialResponse.credential,
       });
 
-      await login(response.data.access, response.data.refresh);
+      if (response.data.access && response.data.refresh) {
+        await login(response.data.access, response.data.refresh);
 
-      // Get the redirect path from location state, or default to '/'
-      const from = (location.state as any)?.from?.pathname || "/";
-      navigate(from, { replace: true });
+        // Get the redirect path from location state, or default to '/'
+        const from = (location.state as any)?.from?.pathname || "/";
+        navigate(from, { replace: true });
+      } else {
+        setErrors({
+          general:
+            "Google login successful, but no access token received. Please try logging in.",
+        });
+        navigate("/login");
+      }
     } catch (error: any) {
       console.error("Google login error:", error);
       if (error.response && error.response.data.error) {

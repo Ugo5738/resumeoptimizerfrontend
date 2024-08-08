@@ -71,7 +71,7 @@ const EditablePDFViewer: React.FC = () => {
   >([]);
 
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
-  const { needsPayment, checkUsageStatus } = useAuth();
+  const { needsPayment, remainingUses, checkUsageStatus } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -382,7 +382,13 @@ const EditablePDFViewer: React.FC = () => {
               className="custom-input"
               rows={1}
             />
-            <button onClick={handleCustomize} className="send-button">
+            <button
+              disabled={remainingUses.customization === 0}
+              onClick={handleCustomize}
+              className={`send-button ${
+                remainingUses.customization ? "deactivated" : ""
+              }`}
+            >
               <FaArrowCircleRight size={30} />
             </button>
           </div>
@@ -432,9 +438,9 @@ const EditablePDFViewer: React.FC = () => {
               <DialogTrigger asChild>
                 <Button
                   className="theme-button-download p-2 rounded"
-                  disabled={needsPayment}
+                  disabled={remainingUses.download === 0}
                   onClick={() => {
-                    if (needsPayment) {
+                    if (needsPayment || remainingUses.download === 0) {
                       navigate("/upgrade");
                     } else {
                       setIsDownloadModalOpen(true);

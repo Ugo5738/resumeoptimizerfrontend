@@ -308,6 +308,16 @@
   color: #6366f1;
 }
 
+.send-button.deactivated {
+  color: #666666;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.send-button.deactivated:hover {
+  color: #666666;
+}
+
 .download-help-text {
   text-align: center;
   margin-top: 10px;

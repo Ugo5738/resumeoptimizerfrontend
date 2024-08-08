@@ -65,7 +65,7 @@ function AppContent() {
   }, [location]);
 
   // Add a constant to easily toggle maintenance mode
-  const isMaintenanceMode = true;
+  const isMaintenanceMode = false;
 
   if (isMaintenanceMode) {
     return <MaintenancePage />;
