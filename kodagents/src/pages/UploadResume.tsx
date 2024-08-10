@@ -30,7 +30,7 @@ const UploadResume: React.FC = () => {
     };
 
     initializeComponent();
-  }, [isLoggedIn, checkUsageStatus]);
+  }, [isLoggedIn]);
 
   const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
