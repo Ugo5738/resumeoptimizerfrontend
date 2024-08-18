@@ -32,6 +32,7 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
   const [postalCode, setPostalCode] = useState("");
   const [phone, setPhone] = useState("");
   const [saveInfo, setSaveInfo] = useState(false);
+  const [cardComplete, setCardComplete] = useState(false);
 
   useEffect(() => {
     // Prefill country and region if available
@@ -43,12 +44,16 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
     }
   }, [selectedCountry, selectedRegion, setSelectedCountry, setSelectedRegion]);
 
+  const handleCardChange = (event: any) => {
+    setCardComplete(event.complete);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
 
-    if (!stripe || !elements) {
-      onSubscriptionError("Stripe has not been properly initialized");
+    if (!stripe || !elements || !cardComplete) {
+      onSubscriptionError("Please complete the card details");
       setLoading(false);
       return;
     }
@@ -115,7 +120,10 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
       <div>
         <h2 className="text-l mb-4">Payment method</h2>
         <div className="bg-gray-50 p-4 rounded-md">
-          <CardElement className="p-2 bg-white rounded border border-gray-300" />
+          <CardElement
+            className="p-2 bg-white rounded border border-gray-300"
+            onChange={handleCardChange}
+          />
         </div>
       </div>
 
@@ -235,8 +243,8 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
 
       <button
         type="submit"
-        disabled={!stripe || loading}
-        className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        disabled={!stripe || loading || !cardComplete}
+        className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FaLock className="h-5 w-5 text-indigo-300 mr-2" />
         {loading ? "Processing..." : "Subscribe"}
