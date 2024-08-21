@@ -13,6 +13,7 @@ import {
 import "../../styles/base.css";
 import { CustomizationInfo, InitialOptimization } from "../../types/types";
 import { trackEvent, trackTiming } from "../../utils/analytics";
+import axiosInstance from "../../utils/axiosConfig";
 import { useAuth } from "../common/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
@@ -53,7 +54,8 @@ const EditablePDFViewer: React.FC = () => {
   const [currentDoc, setCurrentDoc] = useState<DocumentType>("resume");
   const [customInstruction, setCustomInstruction] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isTimeout, setIsTimeout] = useState<boolean>(false);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pdfWidth, setPdfWidth] = useState(600); // Default width
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -73,7 +75,6 @@ const EditablePDFViewer: React.FC = () => {
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const { needsPayment, remainingUses, checkUsageStatus } = useAuth();
   const navigate = useNavigate();
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -167,6 +168,12 @@ const EditablePDFViewer: React.FC = () => {
               setOriginalDocuments(newDocuments);
             }
             trackEvent("Document", "Documents Received");
+            setLoading(false);
+            setError(null);
+            setIsTimeout(false);
+          } else {
+            setError("No document data received. Please try again.");
+            setLoading(false);
           }
 
           if (initial_optimization) {
@@ -209,12 +216,14 @@ const EditablePDFViewer: React.FC = () => {
         } else {
           console.error("Received message is missing 'message' property", data);
           setError("Received message is missing 'message' property");
+          setLoading(false);
           trackEvent("Error", "Missing Message Property");
         }
       });
       startTimer();
     } else {
       setError("WebSocket is not connected");
+      setLoading(false);
     }
 
     return () => {
@@ -238,7 +247,9 @@ const EditablePDFViewer: React.FC = () => {
         setAttempts((prevAttempts) => prevAttempts + 1);
       } else {
         setLoading(false);
+        setIsTimeout(true);
         setDocumentError(true);
+        setError("The operation timed out. Please try again.");
       }
     }
   }, [countdown, attempts, loading]);
@@ -320,6 +331,34 @@ const EditablePDFViewer: React.FC = () => {
     }
   };
 
+  const resetUsageCounts = async () => {
+    try {
+      const response = await axiosInstance.post(
+        "/api/auth/reset-usage-counts/"
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error resetting usage counts:", error);
+      throw error;
+    }
+  };
+
+  const handleRetry = () => {
+    try {
+      // Reset usage counts on the server
+      resetUsageCounts();
+
+      // Update local usage status
+      checkUsageStatus();
+
+      // Navigate back to the upload page
+      navigate("/upload");
+    } catch (error) {
+      console.error("Error resetting usage counts:", error);
+      setError("Failed to reset. Please try again or contact support.");
+    }
+  };
+
   if (DocumentError) {
     return (
       <div className="flex flex-col h-screen">
@@ -356,12 +395,19 @@ const EditablePDFViewer: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error || isTimeout) {
     return (
-      <Alert variant="destructive">
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
+      <div className="flex flex-col items-center justify-center h-full">
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {error || "The operation timed out. Please try again."}
+          </AlertDescription>
+        </Alert>
+        <Button onClick={handleRetry} className="mt-4">
+          Retry
+        </Button>
+      </div>
     );
   }
 
@@ -386,7 +432,7 @@ const EditablePDFViewer: React.FC = () => {
               disabled={remainingUses.customization === 0}
               onClick={handleCustomize}
               className={`send-button ${
-                remainingUses.customization ? "deactivated" : ""
+                remainingUses.customization === 0 ? "deactivated" : ""
               }`}
             >
               <FaArrowCircleRight size={30} />
