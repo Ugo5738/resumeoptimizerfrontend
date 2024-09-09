@@ -321,7 +321,7 @@ const BillingDetails: React.FC = () => {
           {tier === "free" && (
             <div className="w-1/3">
               <img
-                src="/api/placeholder/400/320"
+                src="/upgrade.jpeg"
                 alt="Upgrade illustration"
                 className="w-full h-full object-cover rounded-lg"
               />

@@ -127,7 +127,11 @@ const DocumentCreationForm: React.FC<DocumentCreationFormProps> = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!file || !category}>
+            <Button
+              type="submit"
+              disabled={!file || !category}
+              className="bg-indigo-600 text-white"
+            >
               {existingDocument ? "Update" : "Save"}
             </Button>
           </div>

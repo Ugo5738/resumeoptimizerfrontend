@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import DocumentPreview from "../../components/dashboard/DocumentPreview";
 import DocumentUploader from "../../components/dashboard/DocumentUploader";
@@ -32,10 +33,20 @@ const Dashboard: React.FC = () => {
   const [documentGroups, setDocumentGroups] = useState<
     Record<string, DocumentGroup>
   >({});
+  const [hasOriginalDocuments, setHasOriginalDocuments] = useState<
+    boolean | null
+  >(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDocuments();
   }, [activeTab]);
+
+  useEffect(() => {
+    if (hasOriginalDocuments === false) {
+      navigate("/upload");
+    }
+  }, [hasOriginalDocuments, navigate]);
 
   const fetchDocuments = async () => {
     try {
@@ -43,8 +54,10 @@ const Dashboard: React.FC = () => {
         `/api/resume/get-documents/?document_type=${activeTab}`
       );
       setDocumentGroups(response.data);
+      setHasOriginalDocuments(Object.keys(response.data).length > 0);
     } catch (error) {
       console.error("Error fetching documents:", error);
+      setHasOriginalDocuments(false);
     }
   };
 

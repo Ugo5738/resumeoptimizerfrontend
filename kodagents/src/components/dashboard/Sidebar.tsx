@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 
 interface SidebarProps {
@@ -9,6 +9,12 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleUpgradeClick = () => {
+    navigate("/upgrade"); // Navigate to /upgrade when button is clicked
+  };
+
   return (
     <>
       <div
@@ -79,7 +85,10 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
         <div className="p-4 mt-auto">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm block">Get Hired Fast</span>
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
+            <Button
+              className="bg-indigo-600 hover:bg-indigo-700"
+              onClick={handleUpgradeClick}
+            >
               UPGRADE
             </Button>
           </div>
