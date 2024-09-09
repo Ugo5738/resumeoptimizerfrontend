@@ -84,9 +84,9 @@ const Header: React.FC<HeaderProps> = ({
               Billing
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate("/how-to-use")}>
-              Suggest Feature
+              User Guides
             </DropdownMenuItem>
-            <DropdownMenuItem>User Guides</DropdownMenuItem>
+            <DropdownMenuItem>Suggest Feature</DropdownMenuItem>
             <DropdownMenuItem>Theme</DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
