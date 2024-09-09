@@ -6,8 +6,8 @@ import {
   AiOutlineMenu,
   AiOutlineUser,
 } from "react-icons/ai";
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../common/AuthContext';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const navItems = [
   { name: "How to Use", href: "/how-to-use", icon: AiOutlineHome },
@@ -25,10 +25,10 @@ const Navbar: React.FC = () => {
     e.preventDefault();
     try {
       await logout();
-      navigate('/');
+      navigate("/");
       setIsMobileMenuOpen(false);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     }
   };
 

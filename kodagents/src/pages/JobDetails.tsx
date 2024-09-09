@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/common/AuthContext";
+import { useAuth } from "../components/contexts/AuthContext";
 import BackgroundDesign from "../components/layout/BackgroundDesign";
 import Navbar from "../components/layout/Navbar";
 import { sendMessage } from "../services/websocketService";

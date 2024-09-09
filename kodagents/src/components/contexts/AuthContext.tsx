@@ -7,9 +7,17 @@ import {
 } from "../../services/websocketService";
 import axiosInstance from "../../utils/axiosConfig";
 
+interface User {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 interface AuthContextType {
   isLoggedIn: boolean;
   tier: string | null;
+  setTier: React.Dispatch<React.SetStateAction<string | null>>;
+  fetchSubscriptionDetails: () => Promise<any>;
   needsPayment: boolean;
   remainingUses: {
     download: number;
@@ -17,10 +25,14 @@ interface AuthContextType {
     customization: number;
   };
   isLoading: boolean;
+  user: User | null;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   checkUsageStatus: () => Promise<void>;
+  updateUserInfo: (userInfo: Partial<User>) => Promise<void>;
+  changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     customization: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
   const location = useLocation();
 
   const checkAuth = async () => {
@@ -51,6 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       publicRoutes.includes(location.pathname)
     ) {
       setIsLoggedIn(false);
+      setUser(null);
       setIsLoading(false);
       return;
     }
@@ -58,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await verifyAndRefreshToken();
       setIsLoggedIn(true);
+      await fetchUserInfo();
       await checkUsageStatus();
       // const websocketUrl = `ws://localhost:8000/ws/resume/?token=${accessToken}`;
       const websocketUrl = `wss://api.resumeguru.pro/ws/resume/?token=${accessToken}`;
@@ -65,11 +80,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error("Authentication failed:", error);
       setIsLoggedIn(false);
+      setUser(null);
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
     }
 
     setIsLoading(false);
+  };
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axiosInstance.get("/api/auth/current-user/");
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
   };
 
   useEffect(() => {
@@ -167,18 +192,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     disconnectWebSocket();
   };
 
+  const updateUserInfo = async (userInfo: Partial<User>) => {
+    try {
+      const response = await axiosInstance.patch(
+        "/api/auth/current-user/",
+        userInfo
+      );
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error updating user info:", error);
+      throw error;
+    }
+  };
+
+  const changePassword = async (oldPassword: string, newPassword: string) => {
+    try {
+      await axiosInstance.post("/api/auth/change-password/", {
+        old_password: oldPassword,
+        new_password: newPassword,
+      });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      throw error;
+    }
+  };
+
+  const deleteAccount = async () => {
+    try {
+      await axiosInstance.delete("/api/auth/delete-account/");
+      await logout();
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      throw error;
+    }
+  };
+
+  const fetchSubscriptionDetails = async () => {
+    try {
+      const response = await axiosInstance.get(
+        "/api/payments/subscription-details/"
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching subscription details:", error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         isLoggedIn,
         tier,
+        setTier,
+        fetchSubscriptionDetails,
         needsPayment,
         remainingUses,
         isLoading,
+        user,
         setIsLoggedIn,
         login,
         logout,
         checkUsageStatus,
+        updateUserInfo,
+        changePassword,
+        deleteAccount,
       }}
     >
       {children}

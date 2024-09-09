@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../common/AuthContext';
+import React, { ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 interface ProtectedRouteProps {
   children: ReactNode | ((props: any) => ReactNode);
@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
       </div>
-    )
+    );
   }
 
   if (!isLoggedIn) {
@@ -23,7 +23,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <>{typeof children === 'function' ? children({}) : children}</>;
+  return <>{typeof children === "function" ? children({}) : children}</>;
 };
 
 export default ProtectedRoute;

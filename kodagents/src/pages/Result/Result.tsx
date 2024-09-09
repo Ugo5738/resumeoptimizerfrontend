@@ -1,15 +1,15 @@
-import React, { Suspense, lazy, useEffect } from 'react';
-import BackgroundDesign from '../components/layout/BackgroundDesign';
-import Navbar from '../components/layout/Navbar';
-import { trackEvent } from '../utils/analytics';
+import React, { Suspense, lazy, useEffect } from "react";
+import BackgroundDesign from "../../components/layout/BackgroundDesign";
+import Navbar from "../../components/layout/Navbar";
+import { trackEvent } from "../../utils/analytics";
 
-import '../styles/base.css';
+import "../../styles/base.css";
 
-const EditablePDFViewer = lazy(() => import('../components/layout/EditablePDFViewer'));
+const EditablePDFViewer = lazy(() => import("./EditablePDFViewer"));
 
 const Result: React.FC = () => {
   useEffect(() => {
-    trackEvent('Page View', 'Result');
+    trackEvent("Page View", "Result");
   }, []);
 
   return (

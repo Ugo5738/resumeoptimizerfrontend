@@ -4,7 +4,11 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { useNavigate } from "react-router-dom";
-import InsightsSection from "../../pages/InsightsSection";
+import { useAuth } from "../../components/contexts/AuthContext";
+import DownloadFiles from "../../components/layout/DownloadFiles";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { Button } from "../../components/ui/button";
+import { useDocumentDownload } from "../../hooks/useDocumentDownload";
 import {
   isWebSocketConnected,
   onMessage,
@@ -14,16 +18,7 @@ import "../../styles/base.css";
 import { CustomizationInfo, InitialOptimization } from "../../types/types";
 import { trackEvent, trackTiming } from "../../utils/analytics";
 import axiosInstance from "../../utils/axiosConfig";
-import { useAuth } from "../common/AuthContext";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
+import InsightsSection from "../InsightsSection";
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
@@ -72,9 +67,16 @@ const EditablePDFViewer: React.FC = () => {
     CustomizationInfo[]
   >([]);
 
-  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
-  const { needsPayment, remainingUses, checkUsageStatus } = useAuth();
+  // const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const { checkUsageStatus } = useAuth();
   const navigate = useNavigate();
+  const { remainingUses } = useDocumentDownload({
+    pdfUrl: documents[currentDoc].pdf,
+    docxUrl: documents[currentDoc].docx,
+    isOptimized: true,
+    documentType: currentDoc,
+  });
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -287,38 +289,6 @@ const EditablePDFViewer: React.FC = () => {
     trackEvent("Document", "Loaded Successfully", currentDoc);
   };
 
-  const handleDownload = async (format: "pdf" | "docx" | "both") => {
-    sendMessage({
-      type: "download_document",
-    });
-    trackEvent("Document", "Download Started", currentDoc);
-
-    const downloadFile = async (url: string, fileName: string) => {
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = fileName;
-        link.click();
-      } catch (err) {
-        console.error("Error downloading the file:", err);
-        trackEvent("Error", "Download Failed", fileName);
-      }
-    };
-
-    if (format === "pdf" || format === "both") {
-      await downloadFile(documents[currentDoc].pdf, `${currentDoc}.pdf`);
-    }
-    if (format === "docx" || format === "both") {
-      await downloadFile(documents[currentDoc].docx, `${currentDoc}.docx`);
-    }
-
-    trackEvent("Document", "Download Completed", `${currentDoc}-${format}`);
-    checkUsageStatus();
-    setIsDownloadModalOpen(false);
-  };
-
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCustomInstruction(e.target.value);
     if (textareaRef.current) {
@@ -477,51 +447,20 @@ const EditablePDFViewer: React.FC = () => {
               <FaUndo />
             </button>
 
-            <Dialog
-              open={isDownloadModalOpen}
-              onOpenChange={setIsDownloadModalOpen}
-            >
-              <DialogTrigger asChild>
+            <DownloadFiles
+              pdfUrl={documents[currentDoc].pdf}
+              docxUrl={documents[currentDoc].docx}
+              isOptimized={true}
+              documentType={currentDoc}
+              triggerComponent={
                 <Button
                   className="theme-button-download p-2 rounded"
                   disabled={remainingUses.download === 0}
-                  onClick={() => {
-                    if (needsPayment || remainingUses.download === 0) {
-                      navigate("/upgrade");
-                    } else {
-                      setIsDownloadModalOpen(true);
-                    }
-                  }}
                 >
                   Download {currentDoc === "resume" ? "Resume" : "Cover Letter"}
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Choose Download Format</DialogTitle>
-                </DialogHeader>
-                <div className="flex justify-around mt-4">
-                  <Button
-                    className="custom-dialog-button"
-                    onClick={() => handleDownload("pdf")}
-                  >
-                    PDF
-                  </Button>
-                  <Button
-                    className="custom-dialog-button"
-                    onClick={() => handleDownload("docx")}
-                  >
-                    DOCX
-                  </Button>
-                  <Button
-                    className="custom-dialog-button"
-                    onClick={() => handleDownload("both")}
-                  >
-                    Both
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+              }
+            />
           </div>
         </div>
         <div className="text-center mt-2">

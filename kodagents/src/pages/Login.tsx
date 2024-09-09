@@ -2,7 +2,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import React, { useEffect, useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../components/common/AuthContext";
+import { useAuth } from "../components/contexts/AuthContext";
 import BackgroundDesign from "../components/layout/BackgroundDesign";
 import Navbar from "../components/layout/Navbar";
 import axiosInstance from "../utils/axiosConfig";
@@ -31,7 +31,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [isLoggedIn, navigate]);
 
@@ -76,7 +76,7 @@ const Login: React.FC = () => {
         navigate("/email-verification");
       } else {
         // Redirect to the page user was trying to access, or to upload page
-        const from = (location.state as any)?.from?.pathname || "/upload";
+        const from = (location.state as any)?.from?.pathname || "/dashboard";
         navigate(from, { replace: true });
       }
     } catch (error: any) {

@@ -4,6 +4,12 @@ import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { FaLock } from "react-icons/fa";
 import axiosInstance from "../../utils/axiosConfig";
 
+interface SubscriptionPlan {
+  name: string;
+  price: number;
+  interval: "monthly" | "quarterly" | "lifetime";
+}
+
 interface PaymentFormProps {
   onSubscriptionSuccess: (subscriptionId: string) => void;
   onSubscriptionError: (errorMessage: string) => void;
@@ -12,6 +18,7 @@ interface PaymentFormProps {
   selectedRegion: string;
   setSelectedRegion: (region: string) => void;
   userEmail: string;
+  selectedPlan: SubscriptionPlan | null;
 }
 
 const CheckoutForm: React.FC<PaymentFormProps> = ({
@@ -22,6 +29,7 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
   selectedRegion,
   setSelectedRegion,
   userEmail,
+  selectedPlan,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -60,7 +68,7 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
 
     try {
       const response = await axiosInstance.post("/api/payments/initiate/", {
-        tier: "essential",
+        tier: selectedPlan?.name.toLowerCase() || "essential",
         provider: "stripe",
         payment_type: "subscription",
       });

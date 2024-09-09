@@ -6,32 +6,33 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import About from "./pages/About";
 import ResumeForm from "./pages/Agents/ResumeBuilder/ResumeForm";
 import ResumePreview from "./pages/Agents/ResumeBuilder/ResumePreview";
 import TemplateSelection from "./pages/Agents/ResumeBuilder/TemplateSelection";
-import HomePage from "./pages/HomePage";
-// import ResumeTemplate1 from "./pages/Agents/ResumeBuilder/ResumeTemplate1";
-
-import About from "./pages/About";
 import EmailVerification from "./pages/EmailVerification";
+import HomePage from "./pages/HomePage";
 import HowToUse from "./pages/HowToUse";
 import JobDetails from "./pages/JobDetails";
 import Login from "./pages/Login";
 import MaintenancePage from "./pages/MaintenancePage";
-import PaymentFailed from "./pages/PaymentFailedSub";
-import PaymentForm from "./pages/PaymentForm";
-import PaymentSuccess from "./pages/PaymentSuccessSub";
-import PaymentVerification from "./pages/PaymentVerification";
-import Pricing from "./pages/Pricing";
-import Result from "./pages/Result";
+import PaymentFailed from "./pages/Payment/PaymentFailedSub";
+import PaymentForm from "./pages/Payment/PaymentForm";
+import PaymentSuccess from "./pages/Payment/PaymentSuccessSub";
+import PaymentVerification from "./pages/Payment/PaymentVerification";
+import Pricing from "./pages/Payment/Pricing";
+import Upgrade from "./pages/Payment/UpgradeSub";
+import Result from "./pages/Result/Result";
 import Signup from "./pages/SignUp";
 import Terms from "./pages/Terms";
-import Upgrade from "./pages/UpgradeSub";
 import UploadResume from "./pages/UploadResume";
 import VerifyEmail from "./pages/Verify";
 
-import { AuthProvider } from "../src/components/common/AuthContext";
-import ProtectedRoute from "./components/common/ProtectedRoute";
+import { AuthProvider } from "./components/contexts/AuthContext";
+import ProtectedRoute from "./components/contexts/ProtectedRoute";
+import Account from "./pages/Dashboard/Accounts";
+import Billing from "./pages/Dashboard/Billing";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import { initGA, trackPageView } from "./utils/analytics";
 
 function App() {
@@ -84,6 +85,31 @@ function AppContent() {
         <Route path="/about" element={<About />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/terms" element={<Terms />} />
+
+        <Route
+          path="/dashboard/"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/billing"
+          element={
+            <ProtectedRoute>
+              <Billing />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/account"
+          element={
+            <ProtectedRoute>
+              <Account />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/upload"

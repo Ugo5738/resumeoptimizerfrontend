@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { onMessage } from "../services/websocketService";
-import BackgroundDesign from "../components/layout/BackgroundDesign";
-import Navbar from "../components/layout/Navbar";
-import "../styles/base.css";
+import React, { useEffect, useState } from "react";
+import BackgroundDesign from "../../components/layout/BackgroundDesign";
+import Navbar from "../../components/layout/Navbar";
+import { onMessage } from "../../services/websocketService";
+import "../../styles/base.css";
 
 const Result: React.FC = () => {
   const [resumeUrl, setResumeUrl] = useState<string | undefined>(undefined);
-  const [coverLetterUrl, setCoverLetterUrl] = useState<string | undefined>(undefined);
+  const [coverLetterUrl, setCoverLetterUrl] = useState<string | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(120);
   const [attempts, setAttempts] = useState(0);
@@ -35,7 +37,10 @@ const Result: React.FC = () => {
             setError(true); // Set error state on invalid format
           }
         } else {
-          console.error("Received message is missing 'message' property", message);
+          console.error(
+            "Received message is missing 'message' property",
+            message
+          );
           setError(true); // Set error state on missing 'message' property
         }
       } catch (error) {
@@ -64,16 +69,19 @@ const Result: React.FC = () => {
         {loading ? (
           <div className="loading-container">
             <div className="loader"></div>
-            <p className="text-lg text-gray-600">Optimizing your resume and crafting your cover letter...</p>
             <p className="text-lg text-gray-600">
-              Your resume would be ready in {" "}
-              <span className="countdown"> {countdown} </span>
-              {" "}seconds.
+              Optimizing your resume and crafting your cover letter...
+            </p>
+            <p className="text-lg text-gray-600">
+              Your resume would be ready in{" "}
+              <span className="countdown"> {countdown} </span> seconds.
             </p>
           </div>
         ) : error ? (
           <div className="text-center">
-            <p className="text-lg text-red-600 mb-4">An error occurred! Please try again.</p>
+            <p className="text-lg text-red-600 mb-4">
+              An error occurred! Please try again.
+            </p>
             <a
               href="/upload"
               className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -83,15 +91,27 @@ const Result: React.FC = () => {
           </div>
         ) : (
           <div className="text-center">
-            <p className="text-lg text-gray-600 mb-4">Your documents are ready!</p>
+            <p className="text-lg text-gray-600 mb-4">
+              Your documents are ready!
+            </p>
             <div className="flex space-x-4 mt-8">
               {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="link">
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link"
+                >
                   Click to view optimized resume
                 </a>
               )}
               {coverLetterUrl && (
-                <a href={coverLetterUrl} target="_blank" rel="noopener noreferrer" className="link">
+                <a
+                  href={coverLetterUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link"
+                >
                   Click to view cover letter
                 </a>
               )}

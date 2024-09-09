@@ -1,11 +1,13 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import '../styles/base.css';
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import "../../styles/base.css";
 
 const PaymentFailed: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const errorMessage = location.state?.message || "We're sorry, but your payment could not be processed.";
+  const errorMessage =
+    location.state?.message ||
+    "We're sorry, but your payment could not be processed.";
 
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-100 to-indigo-100">
@@ -15,12 +17,12 @@ const PaymentFailed: React.FC = () => {
         <div className="space-y-4">
           <button
             className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             Try Again
           </button>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="theme-button-view w-full"
           >
             Return to Home

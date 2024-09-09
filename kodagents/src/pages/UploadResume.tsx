@@ -3,7 +3,7 @@ import Navbar from "../components/layout/Navbar";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/common/AuthContext";
+import { useAuth } from "../components/contexts/AuthContext";
 import { sendMessage } from "../services/websocketService";
 import { trackEvent, trackTiming } from "../utils/analytics";
 import axiosInstance from "../utils/axiosConfig";
@@ -130,7 +130,7 @@ const UploadResume: React.FC = () => {
                   >
                     {resume
                       ? resume.name
-                      : "Upload Resume (PDF, DOC, DOCX, TXT)"}
+                      : "Attach Resume (PDF, DOC, DOCX, TXT)"}
                     <input
                       id="resume-upload"
                       type="file"
