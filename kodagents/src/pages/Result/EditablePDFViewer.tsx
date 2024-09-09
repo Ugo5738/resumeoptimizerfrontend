@@ -3,7 +3,7 @@ import { FaArrowCircleRight, FaUndo } from "react-icons/fa";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/contexts/AuthContext";
 import DownloadFiles from "../../components/layout/DownloadFiles";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
@@ -464,9 +464,11 @@ const EditablePDFViewer: React.FC = () => {
           </div>
         </div>
         <div className="text-center mt-2">
-          <p className="download-help-text">
-            You can download the DOCX version to make manual edits.
-          </p>
+          <Link to="/dashboard">
+            <p className="download-help-text">
+              Manage your documents in your dashboard
+            </p>
+          </Link>
         </div>
       </div>
     </div>
