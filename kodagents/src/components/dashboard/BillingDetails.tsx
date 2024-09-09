@@ -14,14 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
 
 interface SubscriptionPlan {
   name: string;
@@ -219,41 +211,41 @@ const BillingDetails: React.FC = () => {
     </RadioGroup>
   );
 
-  const renderBillingHistory = () => (
-    <div>
-      <h3 className="text-lg font-semibold mb-2">Billing History</h3>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Invoice</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {billingHistory.map((invoice, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                {new Date(invoice.date * 1000).toLocaleDateString()}
-              </TableCell>
-              <TableCell>${invoice.amount?.toFixed(2) ?? "N/A"}</TableCell>
-              <TableCell>{invoice.status}</TableCell>
-              <TableCell>
-                <a
-                  href={invoice.invoice_pdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View Invoice
-                </a>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
+  // const renderBillingHistory = () => (
+  //   <div>
+  //     <h3 className="text-lg font-semibold mb-2">Billing History</h3>
+  //     <Table>
+  //       <TableHeader>
+  //         <TableRow>
+  //           <TableHead>Date</TableHead>
+  //           <TableHead>Amount</TableHead>
+  //           <TableHead>Status</TableHead>
+  //           <TableHead>Invoice</TableHead>
+  //         </TableRow>
+  //       </TableHeader>
+  //       <TableBody>
+  //         {billingHistory.map((invoice, index) => (
+  //           <TableRow key={index}>
+  //             <TableCell>
+  //               {new Date(invoice.date * 1000).toLocaleDateString()}
+  //             </TableCell>
+  //             <TableCell>${invoice.amount?.toFixed(2) ?? "N/A"}</TableCell>
+  //             <TableCell>{invoice.status}</TableCell>
+  //             <TableCell>
+  //               <a
+  //                 href={invoice.invoice_pdf}
+  //                 target="_blank"
+  //                 rel="noopener noreferrer"
+  //               >
+  //                 View Invoice
+  //               </a>
+  //             </TableCell>
+  //           </TableRow>
+  //         ))}
+  //       </TableBody>
+  //     </Table>
+  //   </div>
+  // );
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -300,7 +292,7 @@ const BillingDetails: React.FC = () => {
                     Change Plan
                   </Button>
                 </div>
-                {renderBillingHistory()}
+                {/* {renderBillingHistory()} */}
               </>
             ) : (
               <>
