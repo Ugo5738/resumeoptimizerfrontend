@@ -32,7 +32,8 @@ const BillingDetails: React.FC = () => {
   const [currency, setCurrency] = useState("USD");
   const { fetchSubscriptionDetails, tier, setTier } = useAuth();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
-  const [billingHistory, setBillingHistory] = useState<Invoice[]>([]);
+  // const [billingHistory, setBillingHistory] = useState<Invoice[]>([]);
+  const [_, setBillingHistory] = useState<Invoice[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
     null
   );
