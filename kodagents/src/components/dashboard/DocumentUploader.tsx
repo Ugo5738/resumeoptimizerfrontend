@@ -101,8 +101,8 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
           {isDragActive
             ? "Drop the file here"
             : existingDocument
-            ? `Update existing ${documentType}`
-            : `Upload new ${documentType}`}
+            ? `Update existing base ${documentType}`
+            : `Upload new base ${documentType}`}
         </span>
       </Card>
       <DocumentCreationForm
