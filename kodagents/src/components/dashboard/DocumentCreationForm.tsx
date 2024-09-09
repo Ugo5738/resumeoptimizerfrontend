@@ -87,22 +87,23 @@ const DocumentCreationForm: React.FC<DocumentCreationFormProps> = ({
                 {existingDocument ? "Update" : "Upload"}{" "}
                 {documentType === "resume" ? "Resume" : "Cover Letter"}
               </label>
-              <input
-                type="file"
-                id="file"
-                onChange={handleFileChange}
-                className="mt-1 block w-full text-sm text-gray-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-full file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-violet-50 file:text-violet-700
-                          hover:file:bg-violet-100"
-              />
-              {file && (
-                <p className="mt-2 text-sm text-gray-500">
-                  Selected file: {file.name}
-                </p>
-              )}
+              <div className="mt-1 flex items-center">
+                <label
+                  htmlFor="file"
+                  className="cursor-pointer inline-flex items-center px-4 py-2 border-0 rounded-full shadow-sm text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                >
+                  Choose File
+                </label>
+                <span className="ml-3 text-sm text-gray-500">
+                  {file ? file.name : "no file selected"}
+                </span>
+                <input
+                  type="file"
+                  id="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </div>
             </div>
             <div>
               <label
@@ -130,7 +131,7 @@ const DocumentCreationForm: React.FC<DocumentCreationFormProps> = ({
             <Button
               type="submit"
               disabled={!file || !category}
-              className="bg-indigo-600 text-white"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
             >
               {existingDocument ? "Update" : "Save"}
             </Button>

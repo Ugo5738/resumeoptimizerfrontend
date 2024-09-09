@@ -12,7 +12,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
 
   const handleUpgradeClick = () => {
-    navigate("/upgrade"); // Navigate to /upgrade when button is clicked
+    navigate("/upgrade");
   };
 
   return (
@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
           </ul>
         </nav>
         <div className="p-4 mt-auto">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 space-y-2">
             <span className="text-sm block">Get Hired Fast</span>
             <Button
               className="bg-indigo-600 hover:bg-indigo-700"
