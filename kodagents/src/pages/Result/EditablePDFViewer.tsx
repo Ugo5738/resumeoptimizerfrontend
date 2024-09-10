@@ -465,7 +465,7 @@ const EditablePDFViewer: React.FC = () => {
         </div>
         <div className="text-center mt-2">
           <Link to="/dashboard">
-            <p className="download-help-text">
+            <p className="download-help-text text-blue-500 underline">
               Manage your documents in your dashboard
             </p>
           </Link>
