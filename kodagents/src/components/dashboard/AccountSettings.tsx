@@ -19,6 +19,8 @@ const AccountSettings: React.FC = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const isGoogleUser = user?.auth_provider === "google";
+
   const handleEmailChange = async () => {
     try {
       await updateUserInfo({ email: newEmail });
@@ -85,53 +87,66 @@ const AccountSettings: React.FC = () => {
           <Button variant="secondary">Apply</Button>
         </div>
       </div>
-
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Change Email</h2>
-        <p className="text-gray-600 mb-4">
-          Your current email address is {user?.email}.
-          {/* Your current email address is {user?.email}. (Signed in with
-          google.com) */}
-        </p>
-        <div className="flex space-x-2">
-          <Input
-            placeholder="New email address"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            className="flex-grow"
-          />
-          <Button variant="secondary" onClick={handleEmailChange}>
-            Change Email
-          </Button>
+      
+      {!isGoogleUser && (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Change Email</h2>
+          <p className="text-gray-600 mb-4">
+            Your current email address is {user?.email}.
+            {/* Your current email address is {user?.email}. (Signed in with
+            google.com) */}
+          </p>
+          <div className="flex space-x-2">
+            <Input
+              placeholder="New email address"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              className="flex-grow"
+            />
+            <Button variant="secondary" onClick={handleEmailChange}>
+              Change Email
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Change Password</h2>
-        <div className="space-y-4">
-          <Input
-            type="password"
-            placeholder="Old password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder="New password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder="Confirm new password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          <Button variant="secondary" onClick={handlePasswordChange}>
-            Change Password
-          </Button>
+      {!isGoogleUser && (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+          <div className="space-y-4">
+            <Input
+              type="password"
+              placeholder="Old password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="New password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button variant="secondary" onClick={handlePasswordChange}>
+              Change Password
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {isGoogleUser && (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Account Information</h2>
+          <p className="text-gray-600 mb-4">
+            You are signed in with Google ({user?.email}). Email and password changes are not available for Google accounts.
+          </p>
+        </div>
+      )}
 
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Delete Account</h2>

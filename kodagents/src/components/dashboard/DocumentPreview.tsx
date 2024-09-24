@@ -109,6 +109,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
               e.stopPropagation();
               onPreview();
             }}
+            disabled={!isOriginal}
           >
             <Eye className="h-5 w-5" />
           </Button>

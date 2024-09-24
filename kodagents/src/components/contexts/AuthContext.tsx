@@ -11,6 +11,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  auth_provider: string;
 }
 
 interface AuthContextType {
@@ -25,6 +26,7 @@ interface AuthContextType {
     customization: number;
   };
   isLoading: boolean;
+  nextBillingDate: string | null;
   user: User | null;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
@@ -52,6 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [nextBillingDate, setNextBillingDate] = useState<string | null>(null);
   const location = useLocation();
 
   const checkAuth = async () => {
@@ -149,6 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setTier(response.data.tier);
       setNeedsPayment(response.data.needs_payment);
       setRemainingUses(response.data.remaining_uses);
+      setNextBillingDate(response.data.next_billing_date); 
     } catch (error) {
       console.error("Error fetching usage status:", error);
     }
@@ -249,6 +253,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         needsPayment,
         remainingUses,
         isLoading,
+        nextBillingDate,
         user,
         setIsLoggedIn,
         login,

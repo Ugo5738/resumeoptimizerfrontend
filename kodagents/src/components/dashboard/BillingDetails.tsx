@@ -30,7 +30,7 @@ interface Invoice {
 
 const BillingDetails: React.FC = () => {
   const [currency, setCurrency] = useState("USD");
-  const { fetchSubscriptionDetails, tier, setTier } = useAuth();
+  const { fetchSubscriptionDetails, tier, nextBillingDate, setTier } = useAuth();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   // const [billingHistory, setBillingHistory] = useState<Invoice[]>([]);
   const [_, setBillingHistory] = useState<Invoice[]>([]);
@@ -273,7 +273,17 @@ const BillingDetails: React.FC = () => {
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2">Current Plan</h3>
                   <p>You are currently on the {tier} plan.</p>
-                  <p>Next billing date: {new Date().toLocaleDateString()}</p>
+                  <p>
+                    Next billing date:{" "}
+                    {nextBillingDate
+                      ? new Date(nextBillingDate).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "Loading..."
+                    }
+                  </p>
                   <Button
                     onClick={handleCancelSubscription}
                     variant="outline"
