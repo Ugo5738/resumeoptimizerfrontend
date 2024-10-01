@@ -73,7 +73,7 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
               htmlFor="jobDetails"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Job Details
+              Job Details (Optional)
             </label>
             <Textarea
               id="jobDetails"
@@ -94,14 +94,14 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
             onClick={handleSubmit("preview")}
             disabled={isDisabled}
           >
-            Skip and Optimize
+            Skip
           </Button>
           <Button
             className="bg-indigo-500 hover:bg-indigo-600"
             onClick={handleSubmit("optimize")}
             disabled={isDisabled}
           >
-            Tailor
+            Optimize
           </Button>
         </div>
       </DialogContent>

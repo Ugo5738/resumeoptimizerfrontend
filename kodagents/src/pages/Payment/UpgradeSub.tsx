@@ -43,6 +43,32 @@ const UpgradeAndPayment: React.FC = () => {
     }
   }, [location, navigate]);
 
+  const renderPriceDisplay = () => {
+    if (!selectedPlan) return null;
+
+    const formatInterval = (interval: string) => {
+      switch (interval) {
+        case "monthly":
+          return "/month";
+        case "quarterly":
+          return "/quarter";
+        case "lifetime":
+          return "/lifetime";
+        default:
+          return "";
+      }
+    };
+
+    return (
+      <div className="mb-10">
+        <span className="text-4xl font-bold text-indigo-700">
+          ${selectedPlan.price}
+        </span>
+        <span className="text-gray-600">{formatInterval(selectedPlan.interval)}</span>
+      </div>
+    );
+  };
+
   const renderPricingBreakdown = () => {
     if (!selectedPlan) return null;
 
@@ -175,12 +201,7 @@ const UpgradeAndPayment: React.FC = () => {
                   <span className="text-gray-700">Priority support</span>
                 </div>
               </div>
-              <div className="mb-10">
-                <span className="text-4xl font-bold text-indigo-700">
-                  ${selectedPlan?.price}
-                </span>
-                <span className="text-gray-600">/month</span>
-              </div>
+              {renderPriceDisplay()}
               {renderPricingBreakdown()}
               <button
                 onClick={handleMaybeLater}
