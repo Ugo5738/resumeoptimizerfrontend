@@ -6,6 +6,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import FeedbackForm from "./components/engagement/FeedbackForm";
 import About from "./pages/About";
 import ResumeForm from "./pages/Agents/ResumeBuilder/ResumeForm";
 import ResumePreview from "./pages/Agents/ResumeBuilder/ResumePreview";
@@ -85,6 +86,7 @@ function AppContent() {
         <Route path="/about" element={<About />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/feedback" element={<FeedbackForm />} />
 
         <Route
           path="/dashboard/"

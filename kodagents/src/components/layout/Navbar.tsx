@@ -100,12 +100,11 @@ const Navbar: React.FC = () => {
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Resumeguru.pro</span>
-            {/* Placeholder for logo */}
-            <img
+            {/* <img
               className="w-auto h-8"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src="https://kodastorage1.s3.amazonaws.com/static/logos/resumelogo.png"
               alt="Logo"
-            />
+            /> */}
           </Link>
         </div>
 
