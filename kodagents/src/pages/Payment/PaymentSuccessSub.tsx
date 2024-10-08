@@ -30,9 +30,15 @@ const PaymentSuccess: React.FC = () => {
 
       if (reference || subscription_id) {
         try {
-          const response = await axiosInstance.get(
-            `/api/payments/verify/?reference=${reference}&subscription_id=${subscription_id}&provider=${provider}`
-          );
+          let url = `/api/payments/verify/?provider=${provider}`;
+          if (reference) {
+            url += `&reference=${reference}`;
+          }
+          if (subscription_id) {
+            url += `&subscription_id=${subscription_id}`;
+          }
+
+          const response = await axiosInstance.get(url);
           if (response.data.status === "success") {
             setPaymentDetails(response.data.details);
           } else {

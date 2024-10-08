@@ -145,10 +145,14 @@ const UpgradeAndPayment: React.FC = () => {
     }
   }, [selectedCountry, selectedRegion]);
 
-  const handleStripeSubscriptionSuccess = (subscriptionId: any) => {
-    navigate(
-      `/payment-success?subscription_id=${subscriptionId}&provider=stripe`
-    );
+  const handleStripeSubscriptionSuccess = (id: string) => {
+    if (selectedPlan?.name === "premium") {
+      // For one-time payments, redirect to success page with payment intent ID
+      navigate(`/payment-success?reference=${id}&provider=stripe`);
+    } else {
+      // For subscriptions, redirect with subscription ID
+      navigate(`/payment-success?subscription_id=${id}&provider=stripe`);
+    }
   };
 
   const handleStripeSubscriptionError = (errorMessage: string) => {

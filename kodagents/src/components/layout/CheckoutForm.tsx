@@ -67,10 +67,12 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
     }
 
     try {
+      const paymentType = selectedPlan?.name === "premium" ? "one_time" : "subscription";
+
       const response = await axiosInstance.post("/api/payments/initiate/", {
         tier: selectedPlan?.name.toLowerCase() || "essential",
         provider: "stripe",
-        payment_type: "subscription",
+        payment_type: paymentType,
       });
 
       const { client_secret, subscription_id } = await response.data;
@@ -100,8 +102,14 @@ const CheckoutForm: React.FC<PaymentFormProps> = ({
 
       if (result.error) {
         onSubscriptionError(result.error.message || "An error occurred");
-      } else if (result.paymentIntent) {
+      }  else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+        // For one-time payments
+        onSubscriptionSuccess(result.paymentIntent.id);
+      } else if (subscription_id) {
+        // For subscriptions
         onSubscriptionSuccess(subscription_id);
+      } else {
+        onSubscriptionError("Payment failed. Please try again.");
       }
     } catch (error) {
       onSubscriptionError("An unexpected error occurred. Please try again.");

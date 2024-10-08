@@ -2,22 +2,19 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../../utils/axiosConfig";
 
-interface FeedbackFormProps {
-}
-
 interface FeedbackData {
   subject: string;
   body: string;
 }
 
-const FeedbackForm: React.FC<FeedbackFormProps> = () => {
+const FeedbackForm: React.FC = () => {
+  const navigate = useNavigate(); 
   const [feedbackData, setFeedbackData] = useState<FeedbackData>({
     subject: '',
     body: '',
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const navigate = useNavigate(); 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
