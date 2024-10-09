@@ -273,7 +273,7 @@ const BillingDetails: React.FC = () => {
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2">Current Plan</h3>
                   <p>You are currently on the {tier} plan.</p>
-                  <p>
+                  {/* <p>
                     Next billing date:{" "}
                     {nextBillingDate
                       ? new Date(nextBillingDate).toLocaleDateString(undefined, {
@@ -283,7 +283,7 @@ const BillingDetails: React.FC = () => {
                         })
                       : "Loading..."
                     }
-                  </p>
+                  </p> */}
                   <Button
                     onClick={handleCancelSubscription}
                     variant="outline"
