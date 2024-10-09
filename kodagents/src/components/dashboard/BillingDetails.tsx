@@ -30,7 +30,8 @@ interface Invoice {
 
 const BillingDetails: React.FC = () => {
   const [currency, setCurrency] = useState("USD");
-  const { fetchSubscriptionDetails, tier, nextBillingDate, setTier } = useAuth();
+  // const { fetchSubscriptionDetails, tier, nextBillingDate, setTier } = useAuth();
+  const { fetchSubscriptionDetails, tier, setTier } = useAuth();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   // const [billingHistory, setBillingHistory] = useState<Invoice[]>([]);
   const [_, setBillingHistory] = useState<Invoice[]>([]);
